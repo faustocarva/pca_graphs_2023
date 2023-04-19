@@ -1,1 +1,1 @@
-# Graph Lib in Rust build as an assignment of the PCA 2023 class (CIC UNB)
+# Graph Lib in Rust built as an assignment of the PCA 2023 class (CIC UNB)

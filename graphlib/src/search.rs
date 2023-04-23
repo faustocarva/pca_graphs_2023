@@ -37,6 +37,7 @@ pub fn depth_first_search(graph: &Graph, start: u32, target: u32) -> Option<Vec<
             return Some(result);
         }        
         if let Some(neighbors) = graph.adj_list().get(&node) {
+            // Reverse the orther, so we can still use vecdeque
             for neighbor in neighbors.into_iter().rev() {            
                 if visited.insert(*neighbor) {
                     queue.push_front(*neighbor);
@@ -50,7 +51,6 @@ pub fn depth_first_search(graph: &Graph, start: u32, target: u32) -> Option<Vec<
 
 #[cfg(test)]
 mod test_search {
-
     #[test]
     fn test_bfs_find() {
         {
@@ -127,42 +127,36 @@ mod test_search {
 
     #[test]        
     fn test_dfs_find() {
-        {
-            let mut graph = super::Graph::new();
-            graph.add_vertex(1);
-            graph.add_vertex(2);
-            graph.add_vertex(3);
-            graph.add_edge(1, 2);
-            graph.add_edge(2, 3);
+            let mut graph1 = super::Graph::new();
+            graph1.add_vertex(1);
+            graph1.add_vertex(2);
+            graph1.add_vertex(3);
+            graph1.add_edge(1, 2);
+            graph1.add_edge(2, 3);
             assert_eq!(
-                super::depth_first_search(&graph, 1, 4).is_none(),
+                super::depth_first_search(&graph1, 1, 4).is_none(),
                 true
             );    
-        }    
-        {
-            let mut graph = super::Graph::new();
-            graph.add_vertex(1);
-            graph.add_vertex(2);
-            graph.add_vertex(3);
-            graph.add_vertex(4);
-            graph.add_vertex(5);
-            graph.add_vertex(6);
-            graph.add_vertex(7);
-            graph.add_edge(1, 2);
-            graph.add_edge(1, 3);
-            graph.add_edge(2, 4);
-            graph.add_edge(2, 5);
-            graph.add_edge(3, 6);
-            graph.add_edge(3, 7);
+            let mut graph2 = super::Graph::new();
+            graph2.add_vertex(1);
+            graph2.add_vertex(2);
+            graph2.add_vertex(3);
+            graph2.add_vertex(4);
+            graph2.add_vertex(5);
+            graph2.add_vertex(6);
+            graph2.add_vertex(7);
+            graph2.add_edge(1, 2);
+            graph2.add_edge(1, 3);
+            graph2.add_edge(2, 4);
+            graph2.add_edge(2, 5);
+            graph2.add_edge(3, 6);
+            graph2.add_edge(3, 7);
 
-            println!("{:?}", graph);                    
+            println!("{:?}", graph2);
             
-            let result = super::depth_first_search(&graph, 1, 7);
+            let result = super::depth_first_search(&graph2, 1, 7);
             let expected_path = vec![1, 2, 4, 5, 3, 6, 7];
             assert_eq!(result, Some(expected_path));
-        }
-
-
     }
 
 }

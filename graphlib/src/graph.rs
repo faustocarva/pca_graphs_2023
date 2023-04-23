@@ -54,4 +54,12 @@ mod test_graph {
             &vec![3]
         );        
     }
+    #[test]
+    fn test_get_vertices() {
+    }
+
+    #[test]
+    fn test_get_adj_list() {
+    }
+
 }

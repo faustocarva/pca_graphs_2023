@@ -24,7 +24,7 @@ impl Graph {
         self.adj_list.get(&v)
     }
 
-    pub fn adjacency_list(&self) -> &HashMap<u32, Vec<u32>> {
+    pub fn adj_list(&self) -> &HashMap<u32, Vec<u32>> {
         &self.adj_list
     }
 

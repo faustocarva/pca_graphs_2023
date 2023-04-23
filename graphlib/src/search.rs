@@ -14,29 +14,53 @@ pub fn breadth_first_search(graph: &Graph, start: u32, target: u32) -> Option<Ve
         result.push(node);
 
         if node == target {
-            break;
+            return Some(result);
         }        
-        if let Some(neighbors) = graph.adjacency_list().get(&node) {
+        if let Some(neighbors) = graph.adj_list().get(&node) {
             for neighbor in neighbors {
                 queue.push_back(*neighbor);
             }
         }
     }
-    if result.is_empty() {
-        None
-    } else {
-        Some(result)
-    }
+    None
 }
+
+// pub fn depth_first_search(graph: &Graph, start: u32, target: u32) -> Option<Vec<u32>> {
+//     None
+// }
+
 
 #[cfg(test)]
 mod test_bfs {
     #[test]
     fn test_bfs_find() {
+        let mut graph = super::Graph::new();
+        graph.add_vertex(1);
+        graph.add_vertex(2);
+        graph.add_vertex(3);
+        graph.add_edge(1, 2);
+        graph.add_edge(2, 3);
+        assert_eq!(
+            super::breadth_first_search(&graph, 1, 3).is_none(),
+            false
+        );
+
+        let result = super::breadth_first_search(&graph, 1, 3);
+        println!("{:?}", result);
     }
 
     #[test]
-    fn test_bfs_donot_find() {
+    fn test_bfs_find_none() {
+        let mut graph = super::Graph::new();
+        graph.add_vertex(1);
+        graph.add_vertex(2);
+        graph.add_vertex(3);
+        graph.add_edge(1, 2);
+        graph.add_edge(2, 3);
+        assert_eq!(
+            super::breadth_first_search(&graph, 1, 4).is_none(),
+            true
+        );
     }
 }
 

@@ -1,7 +1,7 @@
 use std::collections::{VecDeque,HashSet};
 use super::Graph;
 
-pub fn breadth_first_search(graph: &Graph, start: u32) -> Option<Vec<u32>> {
+pub fn breadth_first_search(graph: &Graph, start: u32, target: u32) -> Option<Vec<u32>> {
     let mut visited = HashSet::new();
     let mut queue = VecDeque::new();
     let mut result = Vec::new();
@@ -9,9 +9,13 @@ pub fn breadth_first_search(graph: &Graph, start: u32) -> Option<Vec<u32>> {
     while let Some(node) = queue.pop_front() {
         if visited.contains(&node) {
             continue;
-        }
+        }        
         visited.insert(node);
         result.push(node);
+
+        if node == target {
+            break;
+        }        
         if let Some(neighbors) = graph.adjacency_list().get(&node) {
             for neighbor in neighbors {
                 queue.push_back(*neighbor);

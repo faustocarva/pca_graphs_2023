@@ -23,6 +23,11 @@ impl Graph {
     pub fn get_adjacent_vertices(&self, v: u32) -> Option<&Vec<u32>> {
         self.adj_list.get(&v)
     }
+
+    pub fn adjacency_list(&self) -> &HashMap<u32, Vec<u32>> {
+        &self.adj_list
+    }
+
 }
 
 

@@ -1,30 +1,36 @@
 use std::collections::HashMap;
+use std::fmt::Debug;
+use std::hash::Hash;
 
 #[derive(Debug, Default, Eq, PartialEq)]
-pub struct Graph {
-    adj_list: HashMap<u32, Vec<u32>>,
+pub struct Graph<V: Hash + Eq + Clone, E: Hash + Eq + Clone> {
+    adj_list: HashMap<V, Vec<(V, E)>>,
 }
 
-impl Graph {
+impl<V: Hash + Eq + Clone, E: Hash + Eq + Clone> Graph<V, E> {
     pub fn new() -> Self {
         Graph {
             adj_list: HashMap::new(),
         }
     }
 
-    pub fn add_vertex(&mut self, v: u32) {
-        self.adj_list.entry(v).or_insert(Vec::new());
+    pub fn add_vertex(&mut self, vertex: V) {
+        self.adj_list.entry(vertex).or_insert(Vec::new());
     }
 
-    pub fn add_edge(&mut self, u: u32, v: u32) {
-        self.adj_list.entry(u).or_insert(Vec::new()).push(v);
+    pub fn add_edge(&mut self, from: V, to: V, value: E) {
+        self.adj_list.entry(from).or_insert(Vec::new()).push((to, value));
     }
 
-    pub fn get_adjacent_vertices(&self, v: u32) -> Option<&Vec<u32>> {
+    // pub fn add_edge(&mut self, from: V, to: V) {
+    //     self.adj_list.entry(from).or_insert(Vec::new()).push((to,0u32));
+    // }
+
+    pub fn get_adjacent_vertices(&self, v: V) -> Option<&Vec<(V, E)>> {
         self.adj_list.get(&v)
     }
 
-    pub fn adj_list(&self) -> &HashMap<u32, Vec<u32>> {
+    pub fn adj_list(&self) -> &HashMap<V, Vec<(V, E)>> {
         &self.adj_list
     }
 
@@ -36,22 +42,22 @@ mod test_graph {
     use super::Graph;
     #[test]
     fn test_add_vertex() {
-        let mut g = Graph::new();
+        let mut g: Graph<u32, u32> = Graph::new();
         g.add_vertex(1);        
     }
 
     #[test]
     fn test_add_edges() {
-        let mut g = Graph::new();
+        let mut g: Graph<u32, u32> = Graph::new();
         g.add_vertex(1);
         g.add_vertex(2);
         g.add_vertex(3);        
-        g.add_edge(1, 2);
-        g.add_edge(2, 3);
+        g.add_edge(1, 2, 0);
+        g.add_edge(2, 3, 0);
         println!("{:?}", g);
         assert_eq!(
             g.get_adjacent_vertices(2).unwrap(),
-            &vec![3]
+            &vec![(3, 0)]
         );        
     }
     #[test]

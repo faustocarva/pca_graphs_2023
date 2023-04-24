@@ -1,7 +1,8 @@
 use std::collections::{VecDeque,HashSet};
+use std::hash::Hash;
 use super::Graph;
 
-pub fn breadth_first_search(graph: &Graph, start: u32, target: u32) -> Option<Vec<u32>> {
+pub fn breadth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &Graph<V, E>, start: V, target: V) -> Option<Vec<V>> {
     let mut visited = HashSet::new();
     let mut queue = VecDeque::new();
     let mut result = Vec::new();
@@ -10,28 +11,28 @@ pub fn breadth_first_search(graph: &Graph, start: u32, target: u32) -> Option<Ve
         if visited.contains(&node) {
             continue;
         }        
-        visited.insert(node);
-        result.push(node);
+        visited.insert(node.clone());
+        result.push(node.clone());
 
         if node == target {
             return Some(result);
         }        
         if let Some(neighbors) = graph.adj_list().get(&node) {
             for neighbor in neighbors {
-                queue.push_back(*neighbor);
+                queue.push_back((*neighbor).0.clone());
             }
         }
     }
     None
 }
 
-pub fn depth_first_search(graph: &Graph, start: u32, target: u32) -> Option<Vec<u32>> {
+pub fn depth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &Graph<V, E>, start: V, target: V) -> Option<Vec<V>> {
     let mut visited = HashSet::new();
     let mut queue = VecDeque::new();
     let mut result = Vec::new();
     queue.push_back(start);
     while let Some(node) = queue.pop_front() {
-        result.push(node);
+        result.push(node.clone());
 
         if node == target {
             return Some(result);
@@ -39,8 +40,8 @@ pub fn depth_first_search(graph: &Graph, start: u32, target: u32) -> Option<Vec<
         if let Some(neighbors) = graph.adj_list().get(&node) {
             // Reverse the orther, so we can still use vecdeque
             for neighbor in neighbors.into_iter().rev() {            
-                if visited.insert(*neighbor) {
-                    queue.push_front(*neighbor);
+                if visited.insert((*neighbor).0.clone()) {
+                    queue.push_front((*neighbor).0.clone());
                 }
             }
         }
@@ -48,9 +49,9 @@ pub fn depth_first_search(graph: &Graph, start: u32, target: u32) -> Option<Vec<
     None
 }
 
-
 #[cfg(test)]
 mod test_search {
+
     #[test]
     fn test_bfs_find() {
         {
@@ -58,8 +59,8 @@ mod test_search {
             graph.add_vertex(1);
             graph.add_vertex(2);
             graph.add_vertex(3);
-            graph.add_edge(1, 2);
-            graph.add_edge(2, 3);
+            graph.add_edge(1, 2, 0);
+            graph.add_edge(2, 3, 0);
             assert_eq!(
                 super::breadth_first_search(&graph, 1, 3).is_none(),
                 false
@@ -80,12 +81,12 @@ mod test_search {
             graph.add_vertex(5);
             graph.add_vertex(6);
             graph.add_vertex(7);
-            graph.add_edge(1, 2);
-            graph.add_edge(1, 3);
-            graph.add_edge(2, 4);
-            graph.add_edge(2, 5);
-            graph.add_edge(3, 6);
-            graph.add_edge(3, 7);
+            graph.add_edge(1, 2, 0);
+            graph.add_edge(1, 3, 0);
+            graph.add_edge(2, 4, 0);
+            graph.add_edge(2, 5, 0);
+            graph.add_edge(3, 6, 0);
+            graph.add_edge(3, 7, 0);
 
             println!("{:?}", graph);                    
             
@@ -102,8 +103,8 @@ mod test_search {
         graph.add_vertex(1);
         graph.add_vertex(2);
         graph.add_vertex(3);
-        graph.add_edge(1, 2);
-        graph.add_edge(2, 3);
+        graph.add_edge(1, 2, 0);
+        graph.add_edge(2, 3, 0);
         assert_eq!(
             super::breadth_first_search(&graph, 1, 4).is_none(),
             true
@@ -116,8 +117,8 @@ mod test_search {
         graph.add_vertex(1);
         graph.add_vertex(2);
         graph.add_vertex(3);
-        graph.add_edge(1, 2);
-        graph.add_edge(2, 3);
+        graph.add_edge(1, 2, 0);
+        graph.add_edge(2, 3, 0);
         assert_eq!(
             super::depth_first_search(&graph, 1, 4).is_none(),
             true
@@ -131,8 +132,8 @@ mod test_search {
             graph1.add_vertex(1);
             graph1.add_vertex(2);
             graph1.add_vertex(3);
-            graph1.add_edge(1, 2);
-            graph1.add_edge(2, 3);
+            graph1.add_edge(1, 2, 0);
+            graph1.add_edge(2, 3, 0);
             assert_eq!(
                 super::depth_first_search(&graph1, 1, 4).is_none(),
                 true
@@ -145,12 +146,12 @@ mod test_search {
             graph2.add_vertex(5);
             graph2.add_vertex(6);
             graph2.add_vertex(7);
-            graph2.add_edge(1, 2);
-            graph2.add_edge(1, 3);
-            graph2.add_edge(2, 4);
-            graph2.add_edge(2, 5);
-            graph2.add_edge(3, 6);
-            graph2.add_edge(3, 7);
+            graph2.add_edge(1, 2, 0);
+            graph2.add_edge(1, 3, 0);
+            graph2.add_edge(2, 4, 0);
+            graph2.add_edge(2, 5, 0);
+            graph2.add_edge(3, 6, 0);
+            graph2.add_edge(3, 7, 0);
 
             println!("{:?}", graph2);
             

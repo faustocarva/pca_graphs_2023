@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashSet,HashMap};
 use std::fmt::Debug;
 use std::hash::Hash;
 
@@ -35,8 +35,20 @@ impl<V: Hash + Eq + Clone, E: Hash + Eq + Clone> Graph<V, E> {
         &self.adj_list
     }
 
-}
+    pub fn vertices_count(&self) -> usize {
+        self.adj_list.len()
+    }
 
+    pub fn contains(&self, vertex: V) -> bool {
+        self.adj_list().get(&vertex).is_some()
+    }
+
+    pub fn vertices(&self) -> HashSet<&V> {
+        self.adj_list().keys().collect()
+    }
+
+
+}
 
 #[cfg(test)]
 mod test_graph {
@@ -74,15 +86,39 @@ mod test_graph {
         assert_eq!(
             g.get_adjacent_vertices("NYC").unwrap(),
             &vec![("MTL", 530), ("TOR", 560)]
-        );        
+        );
     }
 
     #[test]
     fn test_get_vertices() {
+        let mut g  = Graph::new();
+        g.add_vertex("NYC");
+        g.add_vertex("MTL");
+        g.add_vertex("TOR"); 
+        g.add_edge("NYC", "MTL", 530);        
+        println!("{:?}", g.vertices());
+        assert_eq!(
+            g.vertices(),
+            [("NYC"), ("MTL"), ("TOR")]
+                .iter()
+                .collect()
+        );
+
     }
 
     #[test]
-    fn test_get_adj_list() {
-    }
+    fn test_contains_and_count() {
+        let mut g  = Graph::new();
+        g.add_vertex("NYC");
+        g.add_vertex("MTL");
+        g.add_vertex("TOR"); 
+        assert_eq!(
+            g.vertices_count(), 3
+        );
+        g.add_edge("NYC", "MTL", 530);
+        assert_eq!(
+            g.contains(&String::from("NYC")), true
+        );
 
+    }
 }

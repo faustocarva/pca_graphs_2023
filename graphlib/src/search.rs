@@ -2,6 +2,10 @@ use std::collections::{VecDeque,HashSet};
 use std::hash::Hash;
 use super::Graph;
 
+/// Performs the Breadth First Search algorithm on the input graph
+/// 
+/// Returns a Vec storing the vertices the were taken
+///
 pub fn breadth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &Graph<V, E>, start: V, target: V) -> Option<Vec<V>> {
     let mut visited = HashSet::new();
     let mut queue = VecDeque::new();
@@ -26,6 +30,10 @@ pub fn breadth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &
     None
 }
 
+/// Performs the Depth First Search algorithm on the input graph
+/// 
+/// Returns a Vec storing the vertices the were taken
+///
 pub fn depth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &Graph<V, E>, start: V, target: V) -> Option<Vec<V>> {
     let mut visited = HashSet::new();
     let mut queue = VecDeque::new();

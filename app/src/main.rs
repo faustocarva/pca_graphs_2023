@@ -12,8 +12,8 @@ fn main() {
     graph.add_edge(1, 2, 0);
     graph.add_edge(1, 3, 0);
     graph.add_edge(2, 4, 0);
-    graph.add_edge(2, 5, 0 );
+    graph.add_edge(2, 5, 0);
     graph.add_edge(3, 6, 0);
-    graph.add_edge(3, 7, 0 );
+    graph.add_edge(3, 7, 0);
     println!("{:?}", graph);
 }

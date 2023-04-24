@@ -19,7 +19,13 @@ impl<V: Hash + Eq + Clone, E: Hash + Eq + Clone> Graph<V, E> {
     }
 
     pub fn add_edge(&mut self, from: V, to: V, value: E) {
-        self.adj_list.entry(from).or_insert(Vec::new()).push((to, value));
+        if self.adj_list.get(&to).is_some() {
+            if let Some(neighbours) = self.adj_list.get_mut(&from) {
+                if !neighbours.contains(&(to.clone(), value.clone())) {
+                    neighbours.push((to, value));
+                }
+            }
+        }
     }
 
     // There is no method/function overload in rust, and there is not default parameter
@@ -56,7 +62,11 @@ mod test_graph {
     #[test]
     fn test_add_vertex() {
         let mut g: Graph<u32, u32> = Graph::new();
-        g.add_vertex(1);        
+        g.add_vertex(1);
+        g.add_vertex(2);        
+        g.add_edge(1, 2, 0);
+        g.add_edge(1, 2, 0);        
+        println!("{:?}", g);        
     }
 
     #[test]

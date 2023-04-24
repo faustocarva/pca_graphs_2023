@@ -3,9 +3,7 @@ use std::hash::Hash;
 use super::Graph;
 
 /// Performs the Breadth First Search algorithm on the input graph
-/// 
 /// Returns a Vec storing the vertices the were taken
-///
 pub fn breadth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &Graph<V, E>, start: V, target: V) -> Option<Vec<V>> {
     let mut visited = HashSet::new();
     let mut queue = VecDeque::new();
@@ -23,7 +21,7 @@ pub fn breadth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &
         }        
         if let Some(neighbors) = graph.adj_list().get(&node) {
             for neighbor in neighbors {
-                queue.push_back((*neighbor).0.clone());
+                queue.push_back(neighbor.0.clone());
             }
         }
     }
@@ -31,9 +29,7 @@ pub fn breadth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &
 }
 
 /// Performs the Depth First Search algorithm on the input graph
-/// 
 /// Returns a Vec storing the vertices the were taken
-///
 pub fn depth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &Graph<V, E>, start: V, target: V) -> Option<Vec<V>> {
     let mut visited = HashSet::new();
     let mut queue = VecDeque::new();
@@ -47,9 +43,9 @@ pub fn depth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &Gr
         }        
         if let Some(neighbors) = graph.adj_list().get(&node) {
             // Reverse the order, so we can still use VecDeque
-            for neighbor in neighbors.into_iter().rev() {            
-                if visited.insert((*neighbor).0.clone()) {
-                    queue.push_front((*neighbor).0.clone());
+            for neighbor in neighbors.iter().rev() {            
+                if visited.insert(neighbor.0.clone()) {
+                    queue.push_front(neighbor.0.clone());
                 }
             }
         }
@@ -101,6 +97,19 @@ mod test_search {
             let result = super::breadth_first_search(&graph, 1, 7);
             let expected_path = vec![1, 2, 3, 4, 5, 6, 7];
             assert_eq!(result, Some(expected_path));
+        }
+        {
+            let mut g  = super::Graph::new();
+            g.add_vertex("NYC");
+            g.add_vertex("MTL");
+            g.add_vertex("TOR");        
+            g.add_edge("NYC", "MTL", 530);
+            g.add_edge("NYC", "TOR", 560);
+            g.add_edge("MTL", "TOR", 525);
+            let result = super::breadth_first_search(&g, "NYC", "TOR");
+            let expected_path = vec!["NYC", "MTL", "TOR"];
+            assert_eq!(result, Some(expected_path));
+    
         }
 
     }

@@ -38,7 +38,7 @@ pub fn depth_first_search<V: Hash + Eq + Clone, E: Hash + Eq + Clone>(graph: &Gr
             return Some(result);
         }        
         if let Some(neighbors) = graph.adj_list().get(&node) {
-            // Reverse the orther, so we can still use vecdeque
+            // Reverse the order, so we can still use VecDeque
             for neighbor in neighbors.into_iter().rev() {            
                 if visited.insert((*neighbor).0.clone()) {
                     queue.push_front((*neighbor).0.clone());

@@ -22,6 +22,7 @@ impl<V: Hash + Eq + Clone, E: Hash + Eq + Clone> Graph<V, E> {
         self.adj_list.entry(from).or_insert(Vec::new()).push((to, value));
     }
 
+    // There is no method/function overload in rust, and there is not default parameter
     // pub fn add_edge(&mut self, from: V, to: V) {
     //     self.adj_list.entry(from).or_insert(Vec::new()).push((to,0u32));
     // }
@@ -60,6 +61,22 @@ mod test_graph {
             &vec![(3, 0)]
         );        
     }
+    #[test]
+    fn test_add_edges_strings_cities() {
+        let mut g  = Graph::new();
+        g.add_vertex("NYC");
+        g.add_vertex("MTL");
+        g.add_vertex("TOR");        
+        g.add_edge("NYC", "MTL", 530);
+        g.add_edge("NYC", "TOR", 560);
+        g.add_edge("MTL", "TOR", 525);
+        println!("{:?}", g);
+        assert_eq!(
+            g.get_adjacent_vertices("NYC").unwrap(),
+            &vec![("MTL", 530), ("TOR", 560)]
+        );        
+    }
+
     #[test]
     fn test_get_vertices() {
     }

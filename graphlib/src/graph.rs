@@ -2,12 +2,16 @@ use std::collections::{HashSet,HashMap};
 use std::fmt::Debug;
 use std::hash::Hash;
 
+
+pub trait GraphElemTrait: Hash + Eq + Clone {}
+impl<T> GraphElemTrait for T where T: Hash + Eq + Clone {}
+
 #[derive(Debug, Default, Eq, PartialEq)]
-pub struct Graph<V: Hash + Eq + Clone, E: Hash + Eq + Clone> {
+pub struct Graph<V: GraphElemTrait, E: GraphElemTrait> {
     adj_list: HashMap<V, Vec<(V, E)>>,
 }
 
-impl<V: Hash + Eq + Clone, E: Hash + Eq + Clone> Graph<V, E> {
+impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E> {
     pub fn new() -> Self {
         Graph {
             adj_list: HashMap::new(),

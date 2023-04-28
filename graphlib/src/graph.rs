@@ -2,9 +2,11 @@ use std::collections::{HashSet,HashMap};
 use std::fmt::Debug;
 use std::hash::Hash;
 
-
-pub trait GraphElemTrait: Hash + Eq + Clone {}
-impl<T> GraphElemTrait for T where T: Hash + Eq + Clone {}
+///TODO: 
+/// * Make two types of graphs: Directed and Undirected
+/// 
+pub trait GraphElemTrait: Hash + Eq + Clone + Copy {}
+impl<T> GraphElemTrait for T where T: Hash + Eq + Clone + Copy {}
 
 #[derive(Debug, Default, Eq, PartialEq)]
 pub struct Graph<V: GraphElemTrait, E: GraphElemTrait> {

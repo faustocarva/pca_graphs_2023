@@ -9,33 +9,32 @@ pub fn topological_sort<V: GraphElemTrait, E: GraphElemTrait>(graph: &Graph<V, E
     // 1) Preparation:
     //  Build a map of vertices with incoming edges count
     //  Add vertices that have no incoming edges to a queue
-    let mut incoming_edges_count: HashMap<V, usize> = HashMap::default();    
-    for elem in graph.adj_list() {
-        incoming_edges_count.entry(*elem.0).or_insert(0);
-        for dest in elem.1 {
-            *incoming_edges_count.entry(dest.0).or_insert(0) += 1;            
-        }
+    let mut incoming_edges_count: HashMap<V, usize> = HashMap::new();
+    for elem in graph.edges() {
+        incoming_edges_count.entry(elem.0).or_insert(0);
+        *incoming_edges_count.entry(elem.1).or_insert(0) += 1;
     }
-    // 2) Kahn's algorithm:
-    //  For each node in this zero incoming edge queue
-    //      Remove from queue, add to the sort vector
-    //      For each node having this one as dependency
-    //      Decrement the count of incoming edges for the dependent node
-    //      If count is 0, it has no incoming edges anymore, push it to the queue
-    let mut no_incoming_edges: VecDeque<V> = VecDeque::default();
+    let mut no_incoming_edges: VecDeque<V> = VecDeque::new();
     for (node, count) in &incoming_edges_count {
         if *count == 0 {
             no_incoming_edges.push_back(*node);
         }
     }
+
+    // 2) Kahn's algorithm:
+    //  For each node in the no incoming edge queue
+    //      Remove from queue, add to the sort vector
+    //      For each node having this one as dependency
+    //      Decrement the count of incoming edges for the dependent node
+    //      If count is 0, it has no incoming edges anymore, push it to the queue
     
-    let mut sorted = Vec::default();
+    let mut sorted = Vec::new();
     while let Some(edge) = no_incoming_edges.pop_back() {
         sorted.push(edge);
         incoming_edges_count.remove(&edge);
         for neighbour in graph.get_adjacent_vertices(edge).unwrap_or(&vec![]) {
-            if let Some(count) = incoming_edges_count.get_mut(&neighbour.0) {
-                *count -= 1;
+           if let Some(count) = incoming_edges_count.get_mut(&neighbour.0) {
+               *count -= 1;
                 if *count == 0 {
                     incoming_edges_count.remove(&neighbour.0);
                     no_incoming_edges.push_front(neighbour.0);
@@ -47,7 +46,7 @@ pub fn topological_sort<V: GraphElemTrait, E: GraphElemTrait>(graph: &Graph<V, E
     if incoming_edges_count.is_empty() {
         Some(sorted)
     } else {
-        None
+        None //we have cycles
     }    
 }
 
@@ -72,7 +71,9 @@ mod test_search {
         graph.add_edge(2, 5, 0);
         graph.add_edge(3, 6, 0);
         graph.add_edge(3, 7, 0);
-        topological_sort(&graph);
+        let sort = topological_sort(&graph);
+        let sort = sort.unwrap();
+        assert_eq!(Some(vec![1, 2, 3, 4, 5, 6, 7]), Some(sort));
 
         let mut graph1 = super::Graph::new();
         graph1.add_vertex(2);        

@@ -59,6 +59,16 @@ impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E> {
         self.adj_list().keys().collect()
     }
 
+    pub fn edges(&self) -> Vec<(V, V)> {
+        let mut flat_graph: Vec<(V,V)> = Vec::new();
+        for from in &self.adj_list {
+            for to in from.1 {
+                flat_graph.push((*from.0, to.0));
+            }
+        }
+        flat_graph
+    }    
+
 
 }
 

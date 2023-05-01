@@ -133,6 +133,22 @@ mod test_graph {
     }
 
     #[test]
+    fn test_contains_x_edges() {
+        let mut g  = Graph::new();
+        g.add_vertex("NYC");
+        g.add_vertex("MTL");
+        g.add_vertex("TOR"); 
+        assert_eq!(
+            g.edges().len(), 0
+        );
+        g.add_edge("NYC", "MTL", 530);
+        assert_eq!(
+            g.edges().len(), 1
+        );
+
+    }
+
+    #[test]
     fn test_contains_and_count() {
         let mut g  = Graph::new();
         g.add_vertex("NYC");

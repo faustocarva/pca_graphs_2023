@@ -53,10 +53,6 @@ pub fn topological_sort<V: GraphElemTrait, E: GraphElemTrait>(graph: &Graph<V, E
 #[cfg(test)]
 mod test_search {
     use crate::topological_sort;
-    
-    #[test]
-    fn test_sort_none() {
-    }
 
     #[test]
     fn test_sort_with_cycle() {

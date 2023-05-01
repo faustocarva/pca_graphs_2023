@@ -52,6 +52,31 @@ pub fn depth_first_search<V: GraphElemTrait, E: GraphElemTrait>(graph: &Graph<V,
     None
 }
 
+// pub fn dfs(graph: &Graph, start: u32, target: u32) -> Option<Vec<u32>> {
+//     let mut visited = HashSet::new();
+//     let mut result = Vec::new();
+
+//     dfs_helper(graph, start, target, &mut visited, &mut result);
+
+//     Some(result)
+// }
+
+// fn dfs_helper(graph: &Graph, node: u32, target: u32, visited: &mut HashSet<u32>, result: &mut Vec<u32>) -> Option<Vec<u32>> {
+//     if visited.contains(&node) {
+//         return;
+//     }
+
+//     visited.insert(node);
+//     result.push(node);
+
+//     if let Some(neighbors) = graph.get_adjacent_vertices(node) {
+//         for neighbor in neighbors {
+//             dfs_helper(graph, *neighbor , target , visited, result);
+//         }
+//     }
+// }
+
+
 #[cfg(test)]
 mod test_search {
 

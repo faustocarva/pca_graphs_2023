@@ -32,12 +32,12 @@ pub fn topological_sort<V: GraphElemTrait, E: GraphElemTrait>(graph: &Graph<V, E
     while let Some(edge) = no_incoming_edges.pop_back() {
         sorted.push(edge);
         incoming_edges_count.remove(&edge);
-        for neighbour in graph.get_adjacent_vertices(edge).unwrap_or(&vec![]) {
-           if let Some(count) = incoming_edges_count.get_mut(&neighbour.0) {
+        for adjancent in graph.get_adjacent_vertices(edge).unwrap_or(&vec![]) {
+           if let Some(count) = incoming_edges_count.get_mut(&adjancent.0) {
                *count -= 1;
                 if *count == 0 {
-                    incoming_edges_count.remove(&neighbour.0);
-                    no_incoming_edges.push_front(neighbour.0);
+                    incoming_edges_count.remove(&adjancent.0);
+                    no_incoming_edges.push_front(adjancent.0);
                 }
             }
         }
@@ -53,10 +53,26 @@ pub fn topological_sort<V: GraphElemTrait, E: GraphElemTrait>(graph: &Graph<V, E
 #[cfg(test)]
 mod test_search {
     use crate::topological_sort;
-
-
+    
     #[test]
     fn test_sort_none() {
+    }
+
+    #[test]
+    fn test_sort_with_cycle() {
+        let mut graph = super::Graph::new();
+        graph.add_vertex(1);
+        graph.add_vertex(2);
+        graph.add_vertex(3);
+        graph.add_edge(1, 2, 0);
+        graph.add_edge(2, 3, 0);
+        graph.add_edge(3, 1, 0);
+        let sort = topological_sort(&graph);
+        assert_eq!(true, sort.is_none());
+    }
+
+    #[test]
+    fn test_sort_one_variant() {
         let mut graph = super::Graph::new();
         graph.add_vertex(1);
         graph.add_vertex(2);
@@ -74,6 +90,10 @@ mod test_search {
         let sort = topological_sort(&graph);
         let sort = sort.unwrap();
         assert_eq!(Some(vec![1, 2, 3, 4, 5, 6, 7]), Some(sort));
+    }
+
+    #[test]
+    fn test_sort_many_variant() {
 
         let mut graph1 = super::Graph::new();
         graph1.add_vertex(2);        

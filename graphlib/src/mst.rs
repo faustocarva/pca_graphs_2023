@@ -10,5 +10,3 @@
 ///     Else, UNION on those two edges
 ///     Terminate when all edges have been processed, or all vertices have been UNIFIED
 
-use std::collections::DisjointSet;
-

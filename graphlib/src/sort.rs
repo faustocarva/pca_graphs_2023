@@ -1,11 +1,12 @@
+use super::{Graph, GraphElemTrait};
 use std::collections::HashMap;
 use std::collections::VecDeque;
-use super::{Graph, GraphElemTrait};
-
 
 /// Performs topological sort using the Kahn's algorithm.
 /// Returns a Vec storing the vertices in a the topological order.
-pub fn topological_sort<V: GraphElemTrait, E: GraphElemTrait>(graph: &Graph<V, E>) -> Option<Vec<V>> {
+pub fn topological_sort<V: GraphElemTrait, E: GraphElemTrait>(
+    graph: &Graph<V, E>,
+) -> Option<Vec<V>> {
     // 1) Preparation:
     //  Build a map of vertices with incoming edges count
     //  Add vertices that have no incoming edges to a queue
@@ -27,14 +28,14 @@ pub fn topological_sort<V: GraphElemTrait, E: GraphElemTrait>(graph: &Graph<V, E
     //      For each node having this one as dependency
     //      Decrement the count of incoming edges for the dependent node
     //      If count is 0, it has no incoming edges anymore, push it to the queue
-    
+
     let mut sorted = Vec::new();
     while let Some(edge) = no_incoming_edges.pop_back() {
         sorted.push(edge);
         incoming_edges_count.remove(&edge);
         for adjancent in graph.get_adjacent_vertices(edge).unwrap_or(&vec![]) {
-           if let Some(count) = incoming_edges_count.get_mut(&adjancent.0) {
-               *count -= 1;
+            if let Some(count) = incoming_edges_count.get_mut(&adjancent.0) {
+                *count -= 1;
                 if *count == 0 {
                     incoming_edges_count.remove(&adjancent.0);
                     no_incoming_edges.push_front(adjancent.0);
@@ -42,12 +43,12 @@ pub fn topological_sort<V: GraphElemTrait, E: GraphElemTrait>(graph: &Graph<V, E
             }
         }
     }
-    
+
     if incoming_edges_count.is_empty() {
         Some(sorted)
     } else {
         None //we have cycles
-    }    
+    }
 }
 
 #[cfg(test)]
@@ -90,17 +91,16 @@ mod test_search {
 
     #[test]
     fn test_sort_many_variant() {
-
         let mut graph1 = super::Graph::new();
-        graph1.add_vertex(2);        
-        graph1.add_vertex(3);        
+        graph1.add_vertex(2);
+        graph1.add_vertex(3);
         graph1.add_vertex(5);
-        graph1.add_vertex(7);        
+        graph1.add_vertex(7);
         graph1.add_vertex(8);
-        graph1.add_vertex(9);        
+        graph1.add_vertex(9);
         graph1.add_vertex(10);
-        graph1.add_vertex(11);        
-        
+        graph1.add_vertex(11);
+
         graph1.add_edge(5, 11, 0);
         graph1.add_edge(7, 11, 0);
         graph1.add_edge(7, 8, 0);
@@ -110,7 +110,6 @@ mod test_search {
         graph1.add_edge(11, 9, 0);
         graph1.add_edge(11, 10, 0);
         graph1.add_edge(8, 9, 0);
-        topological_sort(&graph1);        
-
+        topological_sort(&graph1);
     }
 }

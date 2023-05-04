@@ -1,9 +1,9 @@
+use std::cmp::Ordering;
+use std::cmp::PartialOrd;
 use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use std::hash::Hash;
-use std::cmp::PartialOrd;
 use std::marker::PhantomData;
-use std::cmp::Ordering;
 
 pub trait GraphElemTrait: Hash + Eq + Clone + Copy + PartialOrd {}
 impl<T> GraphElemTrait for T where T: Hash + Eq + Clone + Copy + PartialOrd {}
@@ -111,7 +111,7 @@ impl<V: GraphElemTrait, E: GraphElemTrait, T: EdgeType> Graph<V, E, T> {
         flat_graph
     }
 
-    pub fn edges_with_weights(&self,  order: Ordering) -> Vec<(V, V, E)> {
+    pub fn edges_with_weights(&self, order: Ordering) -> Vec<(V, V, E)> {
         let mut flat_graph: Vec<(V, V, E)> = Vec::new();
         for from in &self.adj_list {
             for to in from.1 {
@@ -125,13 +125,11 @@ impl<V: GraphElemTrait, E: GraphElemTrait, T: EdgeType> Graph<V, E, T> {
             match order {
                 Ordering::Less => weight_a.partial_cmp(&weight_b).unwrap_or(Ordering::Less),
                 Ordering::Greater => weight_b.partial_cmp(&weight_a).unwrap_or(Ordering::Less),
-                _ => weight_a.partial_cmp(&weight_b).unwrap_or(Ordering::Less)
-            }            
-            
-        });        
+                _ => weight_a.partial_cmp(&weight_b).unwrap_or(Ordering::Less),
+            }
+        });
         flat_graph
     }
-
 }
 
 #[cfg(test)]
@@ -232,10 +230,9 @@ mod test_graph {
         assert_eq!(g.vertices_count(), 3);
         g.add_edge("NYC", "MTL", 530);
         g.add_edge("MTL", "TOR", 590);
-        g.add_edge("TOR", "NYC", 2);        
-        //assert_eq!(g.edges_with_weights().len(), 2);        
-        println!("{:?}", g.edges_with_weights(Ordering::Greater));        
+        g.add_edge("TOR", "NYC", 2);
+        //assert_eq!(g.edges_with_weights().len(), 2);
+        println!("{:?}", g.edges_with_weights(Ordering::Greater));
         //assert_eq!(g.contains(&String::from("NYC")), true);
     }
-
 }

@@ -1,19 +1,36 @@
-use graphlib::*;
+//use graphlib::*;
+
 
 fn main() {
-    let mut graph = Graph::new();
-    graph.add_vertex(1);
-    graph.add_vertex(2);
-    graph.add_vertex(3);
-    graph.add_vertex(4);
-    graph.add_vertex(5);
-    graph.add_vertex(6);
-    graph.add_vertex(7);
-    graph.add_edge(1, 2, 0);
-    graph.add_edge(1, 3, 0);
-    graph.add_edge(2, 4, 0);
-    graph.add_edge(2, 5, 0);
-    graph.add_edge(3, 6, 0);
-    graph.add_edge(3, 7, 0);
-    println!("{:?}", graph);
 }
+
+
+// fn recursive_function(n: i32) {
+//     let buffer = [0u8; 1024]; // declare a large buffer on the stack
+//     println!("Stack frame {} at {:p}", n, &buffer as *const _); // print the address of the stack frame
+//     recursive_function(n+1); // call the function recursively
+// }
+
+// fn main() {
+//     recursive_function(1); // call the recursive function
+// }
+
+// fn main() {
+//     let mut v = vec![
+//         String::from("hello"),
+//         // String::from("world"),
+//         String::from("rust")
+//     ];
+//     borrow(&v);
+//     println!("{}", v.get(0).unwrap());
+//     v.push(String::from("Bazinga"));
+// }
+    
+
+// fn borrow(v: &Vec<String>) {
+//     for i in v {
+//         println!("{}", i)
+//     }
+// }
+
+

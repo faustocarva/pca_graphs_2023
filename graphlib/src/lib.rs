@@ -7,3 +7,6 @@ pub use search::depth_first_search;
 
 mod sort;
 pub use sort::topological_sort;
+
+mod mst;
+pub use mst::kruskal;

@@ -1,3 +1,7 @@
+use super::{Graph, GraphElemTrait};
+#[allow(unused_imports)]
+use petgraph::unionfind::UnionFind;
+
 /// Source for Minimal Spanning Tree algorithms.
 /// First: Kruskal
 /// Second: Prim
@@ -10,3 +14,7 @@
 ///     Else, UNION on those two edges
 ///     Terminate when all edges have been processed, or all vertices have been UNIFIED
 
+#[allow(unused_variables)]
+pub fn kruskal<V: GraphElemTrait, E: GraphElemTrait>(graph: &Graph<V, E>) -> Option<(E, Vec<V>)> {
+    None
+}

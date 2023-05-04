@@ -37,18 +37,18 @@ pub fn topological_sort<V: GraphElemTrait, E: GraphElemTrait>(
             if let Some(count) = incoming_edges_count.get_mut(&adjancent.0) {
                 *count -= 1;
                 if *count == 0 {
-                    incoming_edges_count.remove(&adjancent.0);
                     no_incoming_edges.push_front(adjancent.0);
                 }
             }
         }
     }
 
-    if incoming_edges_count.is_empty() {
-        Some(sorted)
-    } else {
-        None //we have cycles
+    // If we have remaining vertices with incoming edges til this point, its a cyclic graph (we have cycles)
+    if !incoming_edges_count.is_empty() {
+        return None;
     }
+
+    Some(sorted)    
 }
 
 #[cfg(test)]
@@ -90,7 +90,7 @@ mod test_search {
     }
 
     #[test]
-    fn test_sort_many_variant() {
+    fn test_sort_many_variants() {
         let mut graph1 = super::Graph::new();
         graph1.add_vertex(2);
         graph1.add_vertex(3);

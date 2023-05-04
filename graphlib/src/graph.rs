@@ -1,25 +1,58 @@
 use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use std::hash::Hash;
+use std::marker::PhantomData;
 
-///TODO:
-/// * Make two types of graphs: Directed and Undirected
-///
 pub trait GraphElemTrait: Hash + Eq + Clone + Copy {}
 impl<T> GraphElemTrait for T where T: Hash + Eq + Clone + Copy {}
 
 #[derive(Debug, Default, Eq, PartialEq)]
-pub struct Graph<V: GraphElemTrait, E: GraphElemTrait> {
+pub struct Graph<V: GraphElemTrait, E: GraphElemTrait, T = Directed> {
     adj_list: HashMap<V, Vec<(V, E)>>,
+    phantom: PhantomData<T>, //Hackish var to make rustc keep quiet about T
 }
 
-impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E> {
+#[derive(Debug)]
+pub enum Directed {}
+
+#[derive(Debug)]
+pub enum Undirected {}
+
+pub trait EdgeType {
+    fn is_directed() -> bool;
+}
+
+impl EdgeType for Directed {
+    fn is_directed() -> bool {
+        true
+    }
+}
+
+impl EdgeType for Undirected {
+    fn is_directed() -> bool {
+        false
+    }
+}
+
+impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E, Directed> {
     pub fn new() -> Self {
         Graph {
             adj_list: HashMap::new(),
+            phantom: PhantomData,
         }
     }
+}
 
+impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E, Undirected> {
+    pub fn new_undirected() -> Self {
+        Graph {
+            adj_list: HashMap::new(),
+            phantom: PhantomData,
+        }
+    }
+}
+
+impl<V: GraphElemTrait, E: GraphElemTrait, T: EdgeType> Graph<V, E, T> {
     pub fn add_vertex(&mut self, vertex: V) {
         self.adj_list.entry(vertex).or_insert(Vec::new());
     }
@@ -29,6 +62,13 @@ impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E> {
             if let Some(neighbours) = self.adj_list.get_mut(&from) {
                 if !neighbours.contains(&(to, value)) {
                     neighbours.push((to, value));
+                }
+            }
+        }
+        if !T::is_directed() && self.adj_list.get(&from).is_some() {
+            if let Some(neighbours) = self.adj_list.get_mut(&to) {
+                if !neighbours.contains(&(from, value)) {
+                    neighbours.push((from, value));
                 }
             }
         }
@@ -74,12 +114,27 @@ impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E> {
 mod test_graph {
     use super::Graph;
     #[test]
-    fn test_add_vertex() {
-        let mut g: Graph<u32, u32> = Graph::new();
+    fn test_add_edges_duplicated_directed_graph() {
+        let mut g = Graph::new();
         g.add_vertex(1);
         g.add_vertex(2);
+        assert_eq!(g.edges().len(), 0);
         g.add_edge(1, 2, 0);
         g.add_edge(1, 2, 0);
+        assert_eq!(g.edges().len(), 1);
+        println!("{:?}", g);
+    }
+
+    #[test]
+    fn test_add_edges_undirected_graph() {
+        let mut g = Graph::new_undirected();
+        g.add_vertex(1);
+        g.add_vertex(2);
+        assert_eq!(g.edges().len(), 0);
+        g.add_edge(1, 2, 0);
+        assert_eq!(g.edges().len(), 2);
+        g.add_edge(1, 2, 0);
+        assert_eq!(g.edges().len(), 2);
         println!("{:?}", g);
     }
 

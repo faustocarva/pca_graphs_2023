@@ -1,10 +1,10 @@
-use super::{Graph, GraphElemTrait};
+use super::{EdgeType, Graph, GraphElemTrait};
 use std::collections::{HashSet, VecDeque};
 
 /// Performs the Breadth First Search algorithm on the input graph
 /// Returns a Vec storing the vertices the were taken
-pub fn breadth_first_search<V: GraphElemTrait, E: GraphElemTrait>(
-    graph: &Graph<V, E>,
+pub fn breadth_first_search<V: GraphElemTrait, E: GraphElemTrait, T: EdgeType>(
+    graph: &Graph<V, E, T>,
     start: V,
     target: V,
 ) -> Option<Vec<V>> {
@@ -33,8 +33,8 @@ pub fn breadth_first_search<V: GraphElemTrait, E: GraphElemTrait>(
 
 /// Performs the Depth First Search algorithm on the input graph
 /// Returns a Vec storing the vertices the were taken
-pub fn depth_first_search<V: GraphElemTrait, E: GraphElemTrait>(
-    graph: &Graph<V, E>,
+pub fn depth_first_search<V: GraphElemTrait, E: GraphElemTrait, T: EdgeType>(
+    graph: &Graph<V, E, T>,
     start: V,
     target: V,
 ) -> Option<Vec<V>> {

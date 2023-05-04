@@ -1,9 +1,6 @@
 //use graphlib::*;
 
-
-fn main() {
-}
-
+fn main() {}
 
 // fn recursive_function(n: i32) {
 //     let buffer = [0u8; 1024]; // declare a large buffer on the stack
@@ -25,12 +22,9 @@ fn main() {
 //     println!("{}", v.get(0).unwrap());
 //     v.push(String::from("Bazinga"));
 // }
-    
 
 // fn borrow(v: &Vec<String>) {
 //     for i in v {
 //         println!("{}", i)
 //     }
 // }
-
-

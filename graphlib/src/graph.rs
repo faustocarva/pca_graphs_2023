@@ -1,10 +1,12 @@
 use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use std::hash::Hash;
+use std::cmp::PartialOrd;
 use std::marker::PhantomData;
+use std::cmp::Ordering;
 
-pub trait GraphElemTrait: Hash + Eq + Clone + Copy {}
-impl<T> GraphElemTrait for T where T: Hash + Eq + Clone + Copy {}
+pub trait GraphElemTrait: Hash + Eq + Clone + Copy + PartialOrd {}
+impl<T> GraphElemTrait for T where T: Hash + Eq + Clone + Copy + PartialOrd {}
 
 #[derive(Debug, Default, Eq, PartialEq)]
 pub struct Graph<V: GraphElemTrait, E: GraphElemTrait, T = Directed> {
@@ -108,11 +110,34 @@ impl<V: GraphElemTrait, E: GraphElemTrait, T: EdgeType> Graph<V, E, T> {
         }
         flat_graph
     }
+
+    pub fn edges_with_weights(&self,  order: Ordering) -> Vec<(V, V, E)> {
+        let mut flat_graph: Vec<(V, V, E)> = Vec::new();
+        for from in &self.adj_list {
+            for to in from.1 {
+                flat_graph.push((*from.0, to.0, to.1));
+            }
+        }
+
+        flat_graph.sort_unstable_by(|a, b| {
+            let weight_a = a.2;
+            let weight_b = b.2;
+            match order {
+                Ordering::Less => weight_a.partial_cmp(&weight_b).unwrap_or(Ordering::Less),
+                Ordering::Greater => weight_b.partial_cmp(&weight_a).unwrap_or(Ordering::Less),
+                _ => weight_a.partial_cmp(&weight_b).unwrap_or(Ordering::Less)
+            }            
+            
+        });        
+        flat_graph
+    }
+
 }
 
 #[cfg(test)]
 mod test_graph {
     use super::Graph;
+    use std::cmp::Ordering;
     #[test]
     fn test_add_edges_duplicated_directed_graph() {
         let mut g = Graph::new();
@@ -197,4 +222,20 @@ mod test_graph {
         g.add_edge("NYC", "MTL", 530);
         assert_eq!(g.contains(&String::from("NYC")), true);
     }
+
+    #[test]
+    fn test_add_edges_with_weights() {
+        let mut g = Graph::new();
+        g.add_vertex("NYC");
+        g.add_vertex("MTL");
+        g.add_vertex("TOR");
+        assert_eq!(g.vertices_count(), 3);
+        g.add_edge("NYC", "MTL", 530);
+        g.add_edge("MTL", "TOR", 590);
+        g.add_edge("TOR", "NYC", 2);        
+        //assert_eq!(g.edges_with_weights().len(), 2);        
+        println!("{:?}", g.edges_with_weights(Ordering::Greater));        
+        //assert_eq!(g.contains(&String::from("NYC")), true);
+    }
+
 }

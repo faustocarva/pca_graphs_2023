@@ -1,3 +1,4 @@
+use num::Num;
 use std::cmp::Ordering;
 use std::cmp::PartialOrd;
 use std::collections::{HashMap, HashSet};
@@ -7,11 +8,15 @@ use std::marker::PhantomData;
 use std::ops::Add;
 use std::ops::AddAssign;
 use std::ops::Div;
-use num::Num;
 
-
-pub trait GraphEdgeTrait: Default + Num + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign {}
-impl<T> GraphEdgeTrait for T where T: Default +Num + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign {}
+pub trait GraphEdgeTrait:
+    Default + Num + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign
+{
+}
+impl<T> GraphEdgeTrait for T where
+    T: Default + Num + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign
+{
+}
 
 pub trait GraphVertexTrait: Hash + Eq + Clone + Copy + PartialOrd {}
 impl<T> GraphVertexTrait for T where T: Hash + Eq + Clone + Copy + PartialOrd {}

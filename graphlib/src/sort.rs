@@ -1,4 +1,4 @@
-use super::{EdgeType, Graph, GraphVertexTrait, GraphEdgeTrait};
+use super::{EdgeType, Graph, GraphEdgeTrait, GraphVertexTrait};
 use std::collections::HashMap;
 use std::collections::VecDeque;
 

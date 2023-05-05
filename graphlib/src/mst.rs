@@ -1,5 +1,5 @@
+use super::{EdgeType, Graph, GraphEdgeTrait, GraphVertexTrait};
 use std::cmp::Ordering;
-use super::{Graph, GraphVertexTrait, GraphEdgeTrait, EdgeType};
 #[allow(unused_imports)]
 use union_find_rs::prelude::*;
 
@@ -17,11 +17,11 @@ use union_find_rs::prelude::*;
 
 pub fn kruskal<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     graph: &Graph<V, E, T>,
-) -> Option<(E, Vec<(V,V)>)> {
+) -> Option<(E, Vec<(V, V)>)> {
     let edges = graph.edges_with_weights(Ordering::Less);
     //let mut subgraphs = UnionFind::<V>::new(edges.len());
     let mut sets: DisjointSets<V> = DisjointSets::new();
-    let mut result: Vec<(V,V)> = Vec::new();
+    let mut result: Vec<(V, V)> = Vec::new();
     let mut total_weight = E::default();
     //Make set
     for vettice in graph.vertices() {
@@ -43,7 +43,6 @@ pub fn kruskal<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     }
 }
 
-
 #[cfg(test)]
 mod test_mst {
     use crate::kruskal;
@@ -60,5 +59,4 @@ mod test_mst {
         let sort = kruskal(&graph);
         assert_eq!(false, sort.is_none());
     }
-
 }

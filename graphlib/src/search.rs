@@ -1,4 +1,4 @@
-use super::{EdgeType, Graph, GraphVertexTrait, GraphEdgeTrait};
+use super::{EdgeType, Graph, GraphEdgeTrait, GraphVertexTrait};
 use std::collections::{HashSet, VecDeque};
 
 /// Performs the Breadth First Search algorithm on the input graph

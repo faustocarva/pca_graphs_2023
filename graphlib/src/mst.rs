@@ -1,11 +1,8 @@
 use super::{EdgeType, Graph, GraphEdgeTrait, GraphVertexTrait};
 use std::cmp::Ordering;
-#[allow(unused_imports)]
 use union_find_rs::prelude::*;
 
-/// Source for Minimal Spanning Tree algorithms.
-/// First: Kruskal
-/// Second: Prim
+/// Minimal Spanning Tree algorithms.
 
 /// Kruskal (Union-Find over a DisjointSet)
 ///     Make Set with a DisjointSet and the vertices
@@ -43,14 +40,7 @@ pub fn kruskal<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     }
 }
 
-/// Kruskal (UNION/FIND DISJOINT_SET)
-///     Sort edges by ascending edge weight
-///     Loop over sorted edges
-///     Take two vertices
-///     If vertices are UNIFIED (FIND in DISJOINT_SET), don't inclued vertices
-///     Else, UNION on those two edges
-///     Terminate when all edges have been processed, or all vertices have been UNIFIED
-
+/// Prim
 #[allow(unused_variables)]
 pub fn prim<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     graph: &Graph<V, E, T>,

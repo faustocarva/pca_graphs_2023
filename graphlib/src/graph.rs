@@ -4,12 +4,20 @@ use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use std::hash::Hash;
 use std::marker::PhantomData;
+use std::ops::Add;
+use std::ops::AddAssign;
+use std::ops::Div;
+use num::Num;
 
-pub trait GraphElemTrait: Hash + Eq + Clone + Copy + PartialOrd {}
-impl<T> GraphElemTrait for T where T: Hash + Eq + Clone + Copy + PartialOrd {}
+
+pub trait GraphEdgeTrait: Default + Num + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign {}
+impl<T> GraphEdgeTrait for T where T: Default +Num + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign {}
+
+pub trait GraphVertexTrait: Hash + Eq + Clone + Copy + PartialOrd {}
+impl<T> GraphVertexTrait for T where T: Hash + Eq + Clone + Copy + PartialOrd {}
 
 #[derive(Debug, Default, Eq, PartialEq)]
-pub struct Graph<V: GraphElemTrait, E: GraphElemTrait, T = Directed> {
+pub struct Graph<V: GraphVertexTrait, E: GraphEdgeTrait, T = Directed> {
     adj_list: HashMap<V, Vec<(V, E)>>,
     phantom: PhantomData<T>, //Hackish var to make rustc keep quiet about T
 }
@@ -36,7 +44,7 @@ impl EdgeType for Undirected {
     }
 }
 
-impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E, Directed> {
+impl<V: GraphVertexTrait, E: GraphEdgeTrait> Graph<V, E, Directed> {
     pub fn new() -> Self {
         Graph {
             adj_list: HashMap::new(),
@@ -45,7 +53,7 @@ impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E, Directed> {
     }
 }
 
-impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E, Undirected> {
+impl<V: GraphVertexTrait, E: GraphEdgeTrait> Graph<V, E, Undirected> {
     pub fn new_undirected() -> Self {
         Graph {
             adj_list: HashMap::new(),
@@ -54,7 +62,7 @@ impl<V: GraphElemTrait, E: GraphElemTrait> Graph<V, E, Undirected> {
     }
 }
 
-impl<V: GraphElemTrait, E: GraphElemTrait, T: EdgeType> Graph<V, E, T> {
+impl<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType> Graph<V, E, T> {
     pub fn add_vertex(&mut self, vertex: V) {
         self.adj_list.entry(vertex).or_insert(Vec::new());
     }

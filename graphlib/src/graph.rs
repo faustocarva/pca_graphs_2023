@@ -1,4 +1,3 @@
-use num::Num;
 use std::cmp::Ordering;
 use std::cmp::PartialOrd;
 use std::collections::{HashMap, HashSet};
@@ -10,11 +9,11 @@ use std::ops::AddAssign;
 use std::ops::Div;
 
 pub trait GraphEdgeTrait:
-    Default + Num + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign
+    Default + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign
 {
 }
 impl<T> GraphEdgeTrait for T where
-    T: Default + Num + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign
+    T: Default + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign
 {
 }
 
@@ -24,7 +23,7 @@ impl<T> GraphVertexTrait for T where T: Hash + Eq + Clone + Copy + PartialOrd {}
 #[derive(Debug, Default, Eq, PartialEq)]
 pub struct Graph<V: GraphVertexTrait, E: GraphEdgeTrait, T = Directed> {
     adj_list: HashMap<V, Vec<(V, E)>>,
-    phantom: PhantomData<T>, //Hackish var to make rustc keep quiet about T
+    phantom: PhantomData<T>, //Hackish variable to make rustc keep quiet about T
 }
 
 #[derive(Debug)]

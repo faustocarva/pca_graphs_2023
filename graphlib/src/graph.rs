@@ -72,6 +72,9 @@ impl<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType> Graph<V, E, T> {
     }
 
     pub fn add_edge(&mut self, from: V, to: V, value: E) {
+        self.adj_list.entry(to).or_insert(Vec::new());
+        self.adj_list.entry(from).or_insert(Vec::new());
+
         if self.adj_list.get(&to).is_some() {
             if let Some(neighbours) = self.adj_list.get_mut(&from) {
                 if !neighbours.contains(&(to, value)) {

@@ -66,11 +66,30 @@ impl<V: GraphVertexTrait, E: GraphEdgeTrait> Graph<V, E, Undirected> {
     }
 }
 
+#[derive(Debug, Eq, PartialEq)]
+pub struct EdgeComparator<V: GraphVertexTrait, E: GraphEdgeTrait>(pub V, pub V, pub E);
+
+impl<V: GraphVertexTrait, E: GraphEdgeTrait> PartialOrd for EdgeComparator<V, E> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl<V: GraphVertexTrait, E: GraphEdgeTrait> Ord for EdgeComparator<V, E> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        let left = other.2;
+        let right = self.2;
+
+        right.cmp(&left)
+    }
+}
+
 impl<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType> Graph<V, E, T> {
     pub fn add_vertex(&mut self, vertex: V) {
         self.adj_list.entry(vertex).or_insert(Vec::new());
     }
 
+    // There is no method/function overload in rust, and there is not default parameter
     pub fn add_edge(&mut self, from: V, to: V, value: E) {
         self.adj_list.entry(to).or_insert(Vec::new());
         self.adj_list.entry(from).or_insert(Vec::new());
@@ -90,11 +109,6 @@ impl<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType> Graph<V, E, T> {
             }
         }
     }
-
-    // There is no method/function overload in rust, and there is not default parameter
-    // pub fn add_edge(&mut self, from: V, to: V) {
-    //     self.adj_list.entry(from).or_insert(Vec::new()).push((to,0u32));
-    // }
 
     pub fn get_adjacent_vertices(&self, v: V) -> Option<&Vec<(V, E)>> {
         self.adj_list.get(&v)
@@ -237,17 +251,25 @@ mod test_graph {
     }
 
     #[test]
-    fn test_add_edges_with_weights() {
+    fn test_add_edges_with_weights_and_order() {
         let mut g = Graph::new();
         g.add_vertex("NYC");
         g.add_vertex("MTL");
         g.add_vertex("TOR");
         assert_eq!(g.vertices_count(), 3);
         g.add_edge("NYC", "MTL", 530);
-        g.add_edge("MTL", "TOR", 590);
         g.add_edge("TOR", "NYC", 2);
-        //assert_eq!(g.edges_with_weights().len(), 2);
-        println!("{:?}", g.edges_with_weights(Ordering::Greater));
-        //assert_eq!(g.contains(&String::from("NYC")), true);
+        g.add_edge("MTL", "TOR", 590);
+        let greater = g.edges_with_weights(Ordering::Greater);
+        //println!("{:?}", ordered);
+        assert_eq!(
+            greater,
+            vec![("MTL", "TOR", 590), ("NYC", "MTL", 530), ("TOR", "NYC", 2)]
+        );
+        let less = g.edges_with_weights(Ordering::Less);
+        assert_eq!(
+            less,
+            vec![("TOR", "NYC", 2), ("NYC", "MTL", 530), ("MTL", "TOR", 590)]
+        );
     }
 }

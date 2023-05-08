@@ -1,7 +1,7 @@
-use super::{EdgeType, Graph, GraphEdgeTrait, GraphVertexTrait};
-use std::cmp::Reverse;
+use super::{EdgeComparator, EdgeType, Graph, GraphEdgeTrait, GraphVertexTrait};
 use std::cmp::Ordering;
-use std::collections::{BinaryHeap};
+use std::cmp::Reverse;
+use std::collections::BinaryHeap;
 use union_find_rs::prelude::*;
 
 /// Minimal Spanning Tree algorithms.
@@ -22,14 +22,14 @@ pub fn kruskal<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     let mut total_weight = E::default();
 
     // Make set
-    for vettice in graph.vertices() {
-        sets.make_set(*vettice).unwrap();
+    for vertex in graph.vertices() {
+        sets.make_set(*vertex).unwrap();
     }
 
     // Loop over all edges in ascending sort order
     for (from, to, weight) in &edges {
-        if sets.find_set(&from).unwrap() != sets.find_set(&to).unwrap() {
-            sets.union(&from, &to).unwrap();
+        if sets.find_set(from).unwrap() != sets.find_set(to).unwrap() {
+            sets.union(from, to).unwrap();
             result.push((*from, *to));
             total_weight += *weight;
         }
@@ -42,36 +42,18 @@ pub fn kruskal<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     }
 }
 
-
-
-#[derive(Debug, Eq, PartialEq)]
-struct EdgeComparator<V: GraphVertexTrait, E: GraphEdgeTrait>(V, V, E);
-
-impl<V: GraphVertexTrait, E: GraphEdgeTrait>  PartialOrd for EdgeComparator<V, E> {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl<V: GraphVertexTrait, E: GraphEdgeTrait> Ord for EdgeComparator<V, E> {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        let left = other.2;
-        let right = self.2;
-
-        right.cmp(&left)
-    }
-}
 /// Prim
 pub fn prim<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
-    graph: &Graph<V, E, T>, start: V,
+    graph: &Graph<V, E, T>,
+    start: V,
 ) -> Option<(E, Vec<(V, V)>)> {
     let mut prio = BinaryHeap::new();
     let mut visited: Vec<V> = Vec::new();
-    let mut result: Vec<(V, V)> = Vec::new();    
-    let mut total_weight = E::default();    
+    let mut result: Vec<(V, V)> = Vec::new();
+    let mut total_weight = E::default();
 
     for adjancent in graph.get_adjacent_vertices(start).unwrap_or(&vec![]) {
-        prio.push(Reverse(EdgeComparator(adjancent.0, start, adjancent.1))); 
+        prio.push(Reverse(EdgeComparator(adjancent.0, start, adjancent.1)));
     }
 
     visited.push(start);
@@ -83,7 +65,7 @@ pub fn prim<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
 
         visited.push(target);
         result.push((prev, target));
-        total_weight += dist;        
+        total_weight += dist;
 
         for (new_target, cost) in graph.get_adjacent_vertices(target).unwrap_or(&vec![]) {
             if !visited.contains(new_target) {
@@ -166,5 +148,4 @@ mod test_mst {
         println!("{:?}", sort);
         assert_eq!(14, sort.unwrap().0);
     }
-
 }

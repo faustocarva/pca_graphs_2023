@@ -9,11 +9,11 @@ use std::ops::AddAssign;
 use std::ops::Div;
 
 pub trait GraphEdgeTrait:
-    Default + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign
+    Default + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign + Ord
 {
 }
 impl<T> GraphEdgeTrait for T where
-    T: Default + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign
+    T: Default + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign + Ord
 {
 }
 

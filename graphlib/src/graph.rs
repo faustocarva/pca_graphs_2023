@@ -1,4 +1,3 @@
-use std::cmp::Ordering;
 use std::cmp::PartialOrd;
 use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
@@ -48,7 +47,11 @@ impl EdgeType for Undirected {
     }
 }
 
-impl<V: GraphVertexTrait, E: GraphEdgeTrait> Graph<V, E, Directed> {
+impl<V, E> Graph<V, E, Directed>
+where
+    V: GraphVertexTrait,
+    E: GraphEdgeTrait,
+{
     pub fn new() -> Self {
         Graph {
             adj_list: HashMap::new(),
@@ -57,7 +60,11 @@ impl<V: GraphVertexTrait, E: GraphEdgeTrait> Graph<V, E, Directed> {
     }
 }
 
-impl<V: GraphVertexTrait, E: GraphEdgeTrait> Graph<V, E, Undirected> {
+impl<V, E> Graph<V, E, Undirected>
+where
+    V: GraphVertexTrait,
+    E: GraphEdgeTrait,
+{
     pub fn new_undirected() -> Self {
         Graph {
             adj_list: HashMap::new(),
@@ -69,13 +76,21 @@ impl<V: GraphVertexTrait, E: GraphEdgeTrait> Graph<V, E, Undirected> {
 #[derive(Debug, Eq, PartialEq)]
 pub struct EdgeComparator<V: GraphVertexTrait, E: GraphEdgeTrait>(pub V, pub V, pub E);
 
-impl<V: GraphVertexTrait, E: GraphEdgeTrait> PartialOrd for EdgeComparator<V, E> {
+impl<V, E> PartialOrd for EdgeComparator<V, E>
+where
+    V: GraphVertexTrait,
+    E: GraphEdgeTrait,
+{
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<V: GraphVertexTrait, E: GraphEdgeTrait> Ord for EdgeComparator<V, E> {
+impl<V, E> Ord for EdgeComparator<V, E>
+where
+    V: GraphVertexTrait,
+    E: GraphEdgeTrait,
+{
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         let left = other.2;
         let right = self.2;
@@ -84,7 +99,12 @@ impl<V: GraphVertexTrait, E: GraphEdgeTrait> Ord for EdgeComparator<V, E> {
     }
 }
 
-impl<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType> Graph<V, E, T> {
+impl<V, E, T> Graph<V, E, T>
+where
+    V: GraphVertexTrait,
+    E: GraphEdgeTrait,
+    T: EdgeType,
+{
     pub fn add_vertex(&mut self, vertex: V) {
         self.adj_list.entry(vertex).or_insert(Vec::new());
     }
@@ -140,7 +160,7 @@ impl<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType> Graph<V, E, T> {
         flat_graph
     }
 
-    pub fn edges_with_weights(&self, order: Ordering) -> Vec<(V, V, E)> {
+    pub fn edges_with_weights(&self, order: std::cmp::Ordering) -> Vec<(V, V, E)> {
         let mut flat_graph: Vec<(V, V, E)> = Vec::new();
         for from in &self.adj_list {
             for to in from.1 {
@@ -152,9 +172,15 @@ impl<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType> Graph<V, E, T> {
             let weight_a = a.2;
             let weight_b = b.2;
             match order {
-                Ordering::Less => weight_a.partial_cmp(&weight_b).unwrap_or(Ordering::Less),
-                Ordering::Greater => weight_b.partial_cmp(&weight_a).unwrap_or(Ordering::Less),
-                _ => weight_a.partial_cmp(&weight_b).unwrap_or(Ordering::Less),
+                std::cmp::Ordering::Less => weight_a
+                    .partial_cmp(&weight_b)
+                    .unwrap_or(std::cmp::Ordering::Less),
+                std::cmp::Ordering::Greater => weight_b
+                    .partial_cmp(&weight_a)
+                    .unwrap_or(std::cmp::Ordering::Less),
+                _ => weight_a
+                    .partial_cmp(&weight_b)
+                    .unwrap_or(std::cmp::Ordering::Less),
             }
         });
         flat_graph

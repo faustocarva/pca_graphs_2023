@@ -86,7 +86,7 @@ mod test_mst {
     use crate::{kruskal, prim};
 
     #[test]
-    fn test_some_mst() {
+    fn test_cycle_mst_kruskal() {
         let mut graph = super::Graph::new();
         graph.add_vertex(1);
         graph.add_vertex(2);
@@ -94,8 +94,24 @@ mod test_mst {
         graph.add_edge(1, 2, 5);
         graph.add_edge(2, 3, 9);
         graph.add_edge(3, 1, 1);
-        let sort = kruskal(&graph);
-        assert_eq!(false, sort.is_none());
+        let sort_kruskal = kruskal(&graph);
+        assert_eq!(false, sort_kruskal.is_none());
+
+        let sort_prim = prim(&graph, 1);
+        assert_eq!(false, sort_prim.is_none());
+    }
+
+    #[test]
+    fn test_cycle_mst_prim() {
+        let mut graph = super::Graph::new();
+        graph.add_vertex(1);
+        graph.add_vertex(2);
+        graph.add_vertex(3);
+        graph.add_edge(1, 2, 5);
+        graph.add_edge(2, 3, 9);
+        graph.add_edge(3, 1, 1);
+        let sort_prim = prim(&graph, 1);
+        assert_eq!(false, sort_prim.is_none());
     }
 
     #[test]
@@ -124,7 +140,7 @@ mod test_mst {
     }
 
     #[test]
-    fn test_ppt_graph_prim() {
+    fn test_ppt_1_graph_prim() {
         let mut graph = super::Graph::new_undirected();
         graph.add_edge("A", "E", 1);
         graph.add_edge("I", "J", 0);
@@ -147,5 +163,65 @@ mod test_mst {
         let sort = prim(&graph, &"A");
         println!("{:?}", sort);
         assert_eq!(14, sort.unwrap().0);
+    }
+
+    #[test]
+    fn test_ppt_2_graph_prim() {
+        let mut graph = super::Graph::new_undirected();
+        graph.add_edge("0", "1", 10);
+        graph.add_edge("0", "3", 4);
+        graph.add_edge("0", "2", 1);
+
+        graph.add_edge("1", "4", 0);
+        graph.add_edge("1", "2", 3);
+
+        graph.add_edge("2", "3", 2);
+        graph.add_edge("2", "5", 8);
+
+        graph.add_edge("3", "5", 2);
+        graph.add_edge("3", "6", 7);
+
+        graph.add_edge("4", "5", 1);
+        graph.add_edge("4", "7", 8);
+
+        graph.add_edge("5", "6", 6);
+        graph.add_edge("5", "7", 9);
+
+        graph.add_edge("6", "7", 12);
+
+        let sort = prim(&graph, &"0");
+        println!("{:?}", sort);
+        assert_eq!(20, sort.unwrap().0);
+    }
+
+    #[test]
+    fn test_disconnected_graph() {
+        let mut graph = super::Graph::new_undirected();
+        graph.add_edge("0", "1", 10);
+        graph.add_edge("0", "3", 4);
+        graph.add_edge("0", "2", 1);
+
+        graph.add_edge("1", "4", 0);
+        graph.add_edge("1", "2", 3);
+
+        graph.add_edge("2", "3", 2);
+        graph.add_edge("2", "5", 8);
+
+        graph.add_edge("3", "5", 2);
+        graph.add_edge("3", "6", 7);
+
+        graph.add_edge("4", "5", 1);
+
+        graph.add_edge("5", "6", 6);
+
+        graph.add_vertex("7");
+
+        let sort = prim(&graph, &"0");
+        println!("{:?}", sort);
+        assert_eq!(12, sort.unwrap().0);
+
+        let sort_start = prim(&graph, &"7");
+        println!("{:?}", sort_start);
+        assert_eq!(0, sort_start.unwrap().0);
     }
 }

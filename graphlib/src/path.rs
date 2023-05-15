@@ -12,9 +12,8 @@ use std::collections::HashMap;
 pub fn dijkstra<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     graph: &Graph<V, E, T>,
     start: V,
-) -> Option<Vec<(V, E)>> {
+) -> Option<HashMap<V, E>> {
     let mut distances = HashMap::with_capacity(graph.vertices_count());
-    let mut visited: Vec<V> = Vec::new();
     let mut prio = BinaryHeap::new();
 
     for vertex in graph.vertices() {
@@ -23,39 +22,49 @@ pub fn dijkstra<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
 
     prio.push(Reverse(EdgeComparator(start, start, E::default())));
     distances.insert(start, E::default());
-    visited.push(start);
 
-    while let Some(Reverse(EdgeComparator(current_vertex, _, dist))) = prio.pop() {
-        for edge in graph.get_adjacent_vertices(current_vertex).unwrap() {
-            let next_distance = dist + edge.1;
-            if next_distance < *distances.get(&edge.0).unwrap() {
-                distances.insert(edge.0, next_distance);
+
+    while let Some(Reverse(EdgeComparator(new, _, dist))) = prio.pop() {
+        for (next, weight) in graph.get_adjacent_vertices(new).unwrap() {
+            let next_distance = dist + *weight;
+            if next_distance < *distances.get(&next).unwrap() {
+                distances.insert(*next, next_distance);
                 prio.push(Reverse(EdgeComparator(
-                    edge.0,
-                    current_vertex,
+                    *next,
+                    new,
                     next_distance,
                 )));
             }
         }
     }
-
-    None
+    Some(distances)
 }
 
 #[cfg(test)]
 mod test_mst {
     use crate::dijkstra;
+    use std::collections::HashMap;
 
     #[test]
     fn test_dijkstra() {
         let mut graph = super::Graph::new();
+        graph.add_vertex(0);
         graph.add_vertex(1);
         graph.add_vertex(2);
         graph.add_vertex(3);
-        graph.add_vertex(4);
-        graph.add_edge(1, 2, 5);
-        graph.add_edge(2, 3, 9);
-        graph.add_edge(3, 4, 1);
-        dijkstra(&graph, 1);
+        graph.add_vertex(4);        
+        graph.add_edge(0, 1, 4);
+        graph.add_edge(0, 2, 1);        
+        graph.add_edge(2, 1, 2);
+        graph.add_edge(2, 3, 5);
+        graph.add_edge(1, 3, 1);
+        graph.add_edge(3, 4, 3);        
+        let res = dijkstra(&graph, 0);
+
+        let hashmap: HashMap<_, _> = vec![
+            (0, 0), (1, 3), (2, 1), (3, 4), (4, 7)
+        ].into_iter().collect();
+
+        assert_eq!(Some(hashmap), res);
     }
 }

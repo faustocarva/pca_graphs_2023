@@ -12,3 +12,7 @@ pub use sort::topological_sort;
 mod mst;
 pub use mst::kruskal;
 pub use mst::prim;
+
+mod path;
+
+pub use path::dijkstra;

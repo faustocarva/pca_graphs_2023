@@ -1,18 +1,28 @@
+use num::traits::CheckedAdd;
+use num::Bounded;
 use std::cmp::PartialOrd;
 use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use std::hash::Hash;
 use std::marker::PhantomData;
-use std::ops::Add;
 use std::ops::AddAssign;
-use std::ops::Div;
 
 pub trait GraphEdgeTrait:
-    Default + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign + Ord
+    Default + Hash + Eq + Clone + Copy + PartialOrd + PartialEq + AddAssign + Ord + Bounded + CheckedAdd
 {
 }
 impl<T> GraphEdgeTrait for T where
-    T: Default + Hash + Eq + Clone + Copy + PartialOrd + Add + Div + AddAssign + Ord
+    T: Default
+        + Hash
+        + Eq
+        + Clone
+        + Copy
+        + PartialOrd
+        + PartialEq
+        + AddAssign
+        + Ord
+        + Bounded
+        + CheckedAdd
 {
 }
 

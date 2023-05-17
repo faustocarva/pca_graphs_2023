@@ -23,7 +23,6 @@ pub fn dijkstra<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     prio.push(Reverse(EdgeComparator(start, start, E::default())));
     distances.insert(start, E::default());
 
-
     while let Some(Reverse(EdgeComparator(new, _, dist))) = prio.pop() {
         for (next, weight) in graph.get_adjacent_vertices(new).unwrap() {
             let next_distance = dist + *weight;

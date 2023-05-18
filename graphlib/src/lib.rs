@@ -13,6 +13,6 @@ mod mst;
 pub use mst::kruskal;
 pub use mst::prim;
 
-mod path;
+mod single_path;
 
-pub use path::dijkstra;
+pub use single_path::dijkstra;

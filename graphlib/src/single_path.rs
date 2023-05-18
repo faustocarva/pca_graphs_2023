@@ -49,6 +49,7 @@ pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
 mod test_mst {
     use crate::dijkstra;
     use std::collections::HashMap;
+    use ntest::timeout;
 
     #[test]
     fn test_single_edge() {
@@ -65,7 +66,23 @@ mod test_mst {
     }
 
     #[test]
-    fn test_negative_cycle() {}
+    #[timeout(30000)]
+    #[should_panic]
+    fn test_negative_cycle() {
+        let mut graph = super::Graph::new();        
+        graph.add_edge(0, 1, 6);
+        graph.add_edge(0, 3, 7);
+        graph.add_edge(1, 2, 5);
+        graph.add_edge(1, 3, 8);
+        graph.add_edge(1, 4, -4);
+        graph.add_edge(2, 1, -4);
+        graph.add_edge(3, 2, -3);
+        graph.add_edge(3, 4, 9);
+        graph.add_edge(4, 0, 3);
+        graph.add_edge(4, 2, 7);
+
+        dijkstra(&graph, 0);
+    }
 
     #[test]
     fn test_cities_graph() {

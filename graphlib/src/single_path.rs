@@ -35,21 +35,53 @@ pub fn dijkstra<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     Some(distances)
 }
 
-#[allow(unused_variables)]
+
 #[allow(dead_code)]
 /// Bellman-Ford
 pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     graph: &Graph<V, E, T>,
     start: V,
-) -> Option<HashMap<V, E>> {
-    None
+) -> Option<HashMap<V, E>> 
+{
+    let mut distances = HashMap::with_capacity(graph.vertices_count());
+
+    for vertex in graph.vertices() {
+        distances.insert(*vertex, E::max_value());
+    }
+
+    distances.insert(start, E::default());
+
+    for _  in 0..graph.vertices_count() - 1  {
+        for from in graph.vertices() {
+            for (to, weight) in graph.get_adjacent_vertices(*from).unwrap() {
+                let mut next_distance = *distances.get(&from).unwrap();
+                next_distance += *weight;
+                if next_distance < *distances.get(&to).unwrap() {
+                    distances.insert(*to, next_distance);
+                }
+            }
+        }
+    }
+
+    for (from, to, weight) in graph.edges() {
+        let mut dist = *distances.get(&from).unwrap();
+        dist += weight;
+        if *distances.get(&to).unwrap() > dist {
+            return None
+        }
+    }
+
+    return Some(distances)
+
 }
 
 #[cfg(test)]
-mod test_mst {
+mod test_single_path {
     use crate::dijkstra;
-    use std::collections::HashMap;
     use ntest::timeout;
+    use std::collections::HashMap;
+
+    use super::bellman_ford;
 
     #[test]
     fn test_single_edge() {
@@ -66,10 +98,10 @@ mod test_mst {
     }
 
     #[test]
-    #[timeout(30000)]
+    #[timeout(3000)]
     #[should_panic]
     fn test_negative_cycle() {
-        let mut graph = super::Graph::new();        
+        let mut graph = super::Graph::new();
         graph.add_edge(0, 1, 6);
         graph.add_edge(0, 3, 7);
         graph.add_edge(1, 2, 5);
@@ -82,6 +114,24 @@ mod test_mst {
         graph.add_edge(4, 2, 7);
 
         dijkstra(&graph, 0);
+    }
+
+    #[test]
+    fn test_detect_negative_cycle() {
+        let mut graph = super::Graph::new();
+        graph.add_edge(0, 1, 6);
+        graph.add_edge(0, 3, 7);
+        graph.add_edge(1, 2, 5);
+        graph.add_edge(1, 3, 8);
+        graph.add_edge(1, 4, -4);
+        graph.add_edge(2, 1, -4);
+        graph.add_edge(3, 2, -3);
+        graph.add_edge(3, 4, 9);
+        graph.add_edge(4, 0, 3);
+        graph.add_edge(4, 2, 7);
+
+        //let dist = bellman_ford(&graph, 0);
+        //println!("{:?}", dist);        
     }
 
     #[test]
@@ -165,6 +215,6 @@ mod test_mst {
             .into_iter()
             .collect();
 
-        assert_eq!(Some(hashmap), res);
+        assert_eq!(hashmap, res.unwrap());
     }
 }

@@ -9,5 +9,6 @@ edition = "2021"
 [dependencies]
 ntest = "0.9.0"
 num = "0.4.0"
+num-cmp = "0.1.0"
 union-find-rs = "0.2.1"
 

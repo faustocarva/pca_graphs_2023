@@ -35,14 +35,13 @@ pub fn dijkstra<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     Some(distances)
 }
 
-
-#[allow(dead_code)]
 /// Bellman-Ford
+/// Performs edge relaxation, but, with a time complexity that is far away worst
+/// But, also, it is pretty good to find negative cycles
 pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     graph: &Graph<V, E, T>,
     start: V,
-) -> Option<HashMap<V, E>> 
-{
+) -> Option<HashMap<V, E>> {
     let mut distances = HashMap::with_capacity(graph.vertices_count());
 
     for vertex in graph.vertices() {
@@ -51,37 +50,49 @@ pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
 
     distances.insert(start, E::default());
 
-    for _  in 0..graph.vertices_count() - 1  {
-        for from in graph.vertices() {
-            for (to, weight) in graph.get_adjacent_vertices(*from).unwrap() {
-                let mut next_distance = *distances.get(&from).unwrap();
-                next_distance += *weight;
-                if next_distance < *distances.get(&to).unwrap() {
-                    distances.insert(*to, next_distance);
-                }
+    for _ in 0..graph.vertices_count() - 1 {
+        for (from, to, weight) in graph.edges() {
+            let mut next_distance = *distances.get(&from).unwrap();
+            next_distance = safe_add(next_distance, weight);
+
+            if next_distance < *distances.get(&to).unwrap() {
+                distances.insert(to, next_distance);
             }
         }
     }
 
     for (from, to, weight) in graph.edges() {
         let mut dist = *distances.get(&from).unwrap();
-        dist += weight;
+        dist = safe_add(dist, weight);
         if *distances.get(&to).unwrap() > dist {
-            return None
+            return None;
         }
     }
 
-    return Some(distances)
+    return Some(distances);
+}
 
+fn safe_add<E: GraphEdgeTrait>(next_distance: E, weight: E) -> E {
+    let res = next_distance.checked_add(&weight);
+    let dist = match res {
+        Some(sum) => {
+            if next_distance == E::max_value() {
+                weight
+            } else {
+                sum
+            }
+        }
+        None => weight,
+    };
+    dist
 }
 
 #[cfg(test)]
 mod test_single_path {
-    use crate::dijkstra;
+    use super::bellman_ford;
+    use super::dijkstra;
     use ntest::timeout;
     use std::collections::HashMap;
-
-    use super::bellman_ford;
 
     #[test]
     fn test_single_edge() {
@@ -102,16 +113,10 @@ mod test_single_path {
     #[should_panic]
     fn test_negative_cycle() {
         let mut graph = super::Graph::new();
-        graph.add_edge(0, 1, 6);
-        graph.add_edge(0, 3, 7);
-        graph.add_edge(1, 2, 5);
-        graph.add_edge(1, 3, 8);
-        graph.add_edge(1, 4, -4);
-        graph.add_edge(2, 1, -4);
-        graph.add_edge(3, 2, -3);
-        graph.add_edge(3, 4, 9);
-        graph.add_edge(4, 0, 3);
-        graph.add_edge(4, 2, 7);
+        graph.add_edge(1, 2, 1);
+        graph.add_edge(2, 3, 3);
+        graph.add_edge(3, 4, 2);
+        graph.add_edge(4, 2, -6);
 
         dijkstra(&graph, 0);
     }
@@ -119,19 +124,13 @@ mod test_single_path {
     #[test]
     fn test_detect_negative_cycle() {
         let mut graph = super::Graph::new();
-        graph.add_edge(0, 1, 6);
-        graph.add_edge(0, 3, 7);
-        graph.add_edge(1, 2, 5);
-        graph.add_edge(1, 3, 8);
-        graph.add_edge(1, 4, -4);
-        graph.add_edge(2, 1, -4);
-        graph.add_edge(3, 2, -3);
-        graph.add_edge(3, 4, 9);
-        graph.add_edge(4, 0, 3);
-        graph.add_edge(4, 2, 7);
+        graph.add_edge(1, 2, 1);
+        graph.add_edge(2, 3, 3);
+        graph.add_edge(3, 4, 2);
+        graph.add_edge(4, 2, -6);
 
-        //let dist = bellman_ford(&graph, 0);
-        //println!("{:?}", dist);        
+        let dist = bellman_ford(&graph, 0);
+        assert_eq!(None, dist);
     }
 
     #[test]
@@ -196,7 +195,7 @@ mod test_single_path {
     }
 
     #[test]
-    fn test_dijkstra() {
+    fn test_dijkstra_and_bellman_same_result() {
         let mut graph = super::Graph::new();
         graph.add_vertex(0);
         graph.add_vertex(1);
@@ -216,5 +215,8 @@ mod test_single_path {
             .collect();
 
         assert_eq!(hashmap, res.unwrap());
+
+        let res1 = bellman_ford(&graph, 0);
+        assert_eq!(Some(hashmap), res1);
     }
 }

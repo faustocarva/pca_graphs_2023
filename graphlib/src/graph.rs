@@ -1,7 +1,7 @@
 use num::traits::CheckedAdd;
 use num::Bounded;
 use std::cmp::PartialOrd;
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashSet};
 use std::fmt::Debug;
 use std::hash::Hash;
 use std::marker::PhantomData;
@@ -26,12 +26,12 @@ impl<T> GraphEdgeTrait for T where
 {
 }
 
-pub trait GraphVertexTrait: Hash + Eq + Clone + Copy + PartialOrd {}
-impl<T> GraphVertexTrait for T where T: Hash + Eq + Clone + Copy + PartialOrd {}
+pub trait GraphVertexTrait: Hash + Eq + Clone + Copy + PartialOrd + Ord {}
+impl<T> GraphVertexTrait for T where T: Hash + Eq + Clone + Copy + PartialOrd + Ord {}
 
 #[derive(Debug, Default, Eq, PartialEq)]
 pub struct Graph<V: GraphVertexTrait, E: GraphEdgeTrait, T = Directed> {
-    adj_list: HashMap<V, Vec<(V, E)>>,
+    adj_list: BTreeMap<V, Vec<(V, E)>>,
     phantom: PhantomData<T>, //Hackish variable to make rustc keep quiet about T
 }
 
@@ -64,7 +64,7 @@ where
 {
     pub fn new() -> Self {
         Graph {
-            adj_list: HashMap::new(),
+            adj_list: BTreeMap::new(),
             phantom: PhantomData,
         }
     }
@@ -77,7 +77,7 @@ where
 {
     pub fn new_undirected() -> Self {
         Graph {
-            adj_list: HashMap::new(),
+            adj_list: BTreeMap::new(),
             phantom: PhantomData,
         }
     }
@@ -144,7 +144,7 @@ where
         self.adj_list.get(&v)
     }
 
-    pub fn adj_list(&self) -> &HashMap<V, Vec<(V, E)>> {
+    pub fn adj_list(&self) -> &BTreeMap<V, Vec<(V, E)>> {
         &self.adj_list
     }
 

@@ -69,12 +69,12 @@ pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
         }
     }
 
-    return Some(distances);
+    Some(distances)
 }
 
 fn safe_add<E: GraphEdgeTrait>(next_distance: E, weight: E) -> E {
     let res = next_distance.checked_add(&weight);
-    let dist = match res {
+    match res {
         Some(sum) => {
             if next_distance == E::max_value() {
                 weight
@@ -83,8 +83,7 @@ fn safe_add<E: GraphEdgeTrait>(next_distance: E, weight: E) -> E {
             }
         }
         None => weight,
-    };
-    dist
+    }
 }
 
 #[cfg(test)]
@@ -196,7 +195,7 @@ mod test_single_path {
 
     #[test]
     fn test_dijkstra_and_bellman_same_result() {
-        let mut graph = super::Graph::new();
+        let mut graph = super::Graph::new_undirected();
         graph.add_vertex(0);
         graph.add_vertex(1);
         graph.add_vertex(2);
@@ -208,15 +207,21 @@ mod test_single_path {
         graph.add_edge(2, 3, 5);
         graph.add_edge(1, 3, 1);
         graph.add_edge(3, 4, 3);
-        let res = dijkstra(&graph, 0);
 
-        let hashmap: HashMap<_, _> = vec![(0, 0), (1, 3), (2, 1), (3, 4), (4, 7)]
+        let hashmap_0: HashMap<_, _> = vec![(0, 0), (1, 3), (2, 1), (3, 4), (4, 7)]
             .into_iter()
             .collect();
 
-        assert_eq!(hashmap, res.unwrap());
+        let hashmap_1: HashMap<_, _> = vec![(0, 3), (1, 0), (2, 2), (3, 1), (4, 4)]
+            .into_iter()
+            .collect();
+
+        let res_0 = dijkstra(&graph, 0);
+        assert_eq!(hashmap_0, res_0.unwrap());
+        let res_1 = dijkstra(&graph, 1);
+        assert_eq!(hashmap_1, res_1.unwrap());
 
         let res1 = bellman_ford(&graph, 0);
-        assert_eq!(Some(hashmap), res1);
+        assert_eq!(hashmap_0, res1.unwrap());
     }
 }

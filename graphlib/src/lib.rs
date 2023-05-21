@@ -15,8 +15,8 @@ pub use mst::prim;
 
 mod single_path;
 
-pub use single_path::dijkstra;
 pub use single_path::bellman_ford;
+pub use single_path::dijkstra;
 
 mod all_path;
 

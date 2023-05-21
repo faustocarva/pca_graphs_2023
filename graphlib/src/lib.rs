@@ -1,6 +1,5 @@
-pub use graph::*;
-
 mod graph;
+pub use graph::*;
 
 mod search;
 pub use search::breadth_first_search;
@@ -14,10 +13,8 @@ pub use mst::kruskal;
 pub use mst::prim;
 
 mod single_path;
-
 pub use single_path::bellman_ford;
 pub use single_path::dijkstra;
 
 mod all_path;
-
 pub use all_path::floyd_warshall;

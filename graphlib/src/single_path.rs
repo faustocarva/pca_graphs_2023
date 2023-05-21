@@ -52,6 +52,7 @@ pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
 
     for _ in 0..graph.vertices_count() - 1 {
         for (from, to, weight) in graph.edges() {
+            println!("{:?}", (from, to, weight));
             let mut next_distance = *distances.get(&from).unwrap();
             next_distance = safe_add(next_distance, weight);
 
@@ -196,11 +197,6 @@ mod test_single_path {
     #[test]
     fn test_dijkstra_and_bellman_same_result() {
         let mut graph = super::Graph::new_undirected();
-        graph.add_vertex(0);
-        graph.add_vertex(1);
-        graph.add_vertex(2);
-        graph.add_vertex(3);
-        graph.add_vertex(4);
         graph.add_edge(0, 1, 4);
         graph.add_edge(0, 2, 1);
         graph.add_edge(2, 1, 2);

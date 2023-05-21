@@ -8,11 +8,23 @@ use std::marker::PhantomData;
 use std::ops::AddAssign;
 
 pub trait GraphEdgeTrait:
-    Default + Hash + Eq + Clone + Copy + PartialOrd + PartialEq + AddAssign + Ord + Bounded + CheckedAdd
+    Default
+    + Debug
+    + Hash
+    + Eq
+    + Clone
+    + Copy
+    + PartialOrd
+    + PartialEq
+    + AddAssign
+    + Ord
+    + Bounded
+    + CheckedAdd
 {
 }
 impl<T> GraphEdgeTrait for T where
     T: Default
+        + Debug
         + Hash
         + Eq
         + Clone
@@ -26,8 +38,8 @@ impl<T> GraphEdgeTrait for T where
 {
 }
 
-pub trait GraphVertexTrait: Hash + Eq + Clone + Copy + PartialOrd + Ord {}
-impl<T> GraphVertexTrait for T where T: Hash + Eq + Clone + Copy + PartialOrd + Ord {}
+pub trait GraphVertexTrait: Debug + Hash + Eq + Clone + Copy + PartialOrd + Ord {}
+impl<T> GraphVertexTrait for T where T: Debug + Hash + Eq + Clone + Copy + PartialOrd + Ord {}
 
 #[derive(Debug, Default, Eq, PartialEq)]
 pub struct Graph<V: GraphVertexTrait, E: GraphEdgeTrait, T = Directed> {

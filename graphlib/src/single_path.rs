@@ -52,11 +52,12 @@ pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
 
     for _ in 0..graph.vertices_count() - 1 {
         for (from, to, weight) in graph.edges() {
-            println!("{:?}", (from, to, weight));
             let mut next_distance = *distances.get(&from).unwrap();
             next_distance = safe_add(next_distance, weight);
 
-            if next_distance < *distances.get(&to).unwrap() {
+            if *distances.get(&from).unwrap() != E::max_value()
+                && (next_distance < *distances.get(&to).unwrap())
+            {
                 distances.insert(to, next_distance);
             }
         }
@@ -65,7 +66,7 @@ pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
     for (from, to, weight) in graph.edges() {
         let mut dist = *distances.get(&from).unwrap();
         dist = safe_add(dist, weight);
-        if *distances.get(&to).unwrap() > dist {
+        if dist < *distances.get(&to).unwrap() {
             return None;
         }
     }
@@ -76,13 +77,7 @@ pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
 fn safe_add<E: GraphEdgeTrait>(next_distance: E, weight: E) -> E {
     let res = next_distance.checked_add(&weight);
     match res {
-        Some(sum) => {
-            if next_distance == E::max_value() {
-                weight
-            } else {
-                sum
-            }
-        }
+        Some(sum) => sum,
         None => weight,
     }
 }
@@ -219,5 +214,7 @@ mod test_single_path {
 
         let res1 = bellman_ford(&graph, 0);
         assert_eq!(hashmap_0, res1.unwrap());
+        let res2 = bellman_ford(&graph, 1);
+        assert_eq!(hashmap_1, res2.unwrap());
     }
 }

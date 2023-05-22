@@ -1,4 +1,4 @@
-use super::{EdgeComparator, EdgeType, Graph, GraphEdgeTrait, GraphVertexTrait};
+use super::{EdgeComparator, EdgeTypeTrait, Graph, GraphEdgeTrait, GraphVertexTrait};
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
@@ -9,7 +9,7 @@ use std::collections::HashMap;
 /// Performs edge relaxation
 /// The return could be a map/vec with the minimal value for each vertex, or
 /// it could be the total cost from start to end (if end is present)
-pub fn dijkstra<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
+pub fn dijkstra<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeTypeTrait>(
     graph: &Graph<V, E, T>,
     start: V,
 ) -> Option<HashMap<V, E>> {
@@ -38,7 +38,7 @@ pub fn dijkstra<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
 /// Bellman-Ford
 /// Performs edge relaxation, but, with a time complexity that is far away worst
 /// But, also, it is pretty good to find negative cycles
-pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
+pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeTypeTrait>(
     graph: &Graph<V, E, T>,
     start: V,
 ) -> Option<HashMap<V, E>> {
@@ -94,7 +94,7 @@ mod test_single_path {
     use std::collections::HashMap;
 
     #[test]
-    fn test_single_edge() {
+    fn test_single_graph_dijkstra() {
         let mut graph = super::Graph::new();
         graph.add_edge(0, 1, 2);
 
@@ -105,6 +105,20 @@ mod test_single_path {
         let dists_1: HashMap<_, _> = vec![(1, 0), (0, i32::max_value())].into_iter().collect();
 
         assert_eq!(dijkstra(&graph, 1), Some(dists_1));
+    }
+
+    #[test]
+    fn test_single_graph_bellman() {
+        let mut graph = super::Graph::new();
+        graph.add_edge(0, 1, 2);
+
+        let dists_0: HashMap<_, _> = vec![(0, 0), (1, 2)].into_iter().collect();
+
+        assert_eq!(bellman_ford(&graph, 0), Some(dists_0));
+
+        let dists_1: HashMap<_, _> = vec![(1, 0), (0, i32::max_value())].into_iter().collect();
+
+        assert_eq!(bellman_ford(&graph, 1), Some(dists_1));
     }
 
     #[test]
@@ -127,9 +141,7 @@ mod test_single_path {
         graph.add_edge(2, 3, 3);
         graph.add_edge(3, 4, 2);
         graph.add_edge(4, 2, -6);
-
-        let dist = bellman_ford(&graph, 0);
-        assert_eq!(None, dist);
+        assert_eq!(None, bellman_ford(&graph, 0));
     }
 
     #[test]
@@ -221,6 +233,7 @@ mod test_single_path {
         let res2 = bellman_ford(&graph, 1);
         assert_eq!(hashmap_1, res2.unwrap());
     }
+
     #[test]
     fn test_bellman() {
         let mut h = super::Graph::new();

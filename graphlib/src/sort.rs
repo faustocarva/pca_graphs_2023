@@ -1,10 +1,10 @@
-use super::{EdgeType, Graph, GraphEdgeTrait, GraphVertexTrait};
+use super::{EdgeTypeTrait, Graph, GraphEdgeTrait, GraphVertexTrait};
 use std::collections::HashMap;
 use std::collections::VecDeque;
 
 /// Performs topological sort using the Kahn's algorithm.
 /// Returns a Vec storing the vertices in a the topological order.
-pub fn topological_sort<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
+pub fn topological_sort<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeTypeTrait>(
     graph: &Graph<V, E, T>,
 ) -> Option<Vec<V>> {
     // 1) Preparation:

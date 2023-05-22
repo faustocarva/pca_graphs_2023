@@ -18,12 +18,20 @@ Graph algorithms that have been done:
     - [x] Kruskal's algorithm    
 - [x] Single-pair shortest path problem
     - [x] Dijkstra's algorithm
+        - [x] Distance array output
+        - [ ] Shortest Path output
     - [x] Bellman–Ford algorithm
+        - [x] Distance array output
+        - [ ] Shortest Path output
+        - [x] Detect negative cycle
 - [x] All-pairs shortest path problem
     - [x] Floyd–Warshall algorithm
+        - [x] Distance map output
+        - [ ] All-Pairs Shortest Path output
+        - [x] Detect negative cycle    
 - [ ] Maximum flow problem
     - [ ] Ford–Fulkerson algorithm
-- [ ] Centrality problem
+- [ ] Centrality problem / Link Analysis 
     - [ ] PageRank algorithm
     
 ## How to build and test

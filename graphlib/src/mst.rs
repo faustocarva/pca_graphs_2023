@@ -1,4 +1,4 @@
-use super::{EdgeComparator, EdgeType, Graph, GraphEdgeTrait, GraphVertexTrait};
+use super::{EdgeComparator, EdgeTypeTrait, Graph, GraphEdgeTrait, GraphVertexTrait};
 use std::cmp::Ordering;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
@@ -13,7 +13,7 @@ use union_find_rs::prelude::*;
 ///     If vertices are Unified, don't inclued vertices
 ///     Else, Unify those two edges
 ///     Terminate when all edges have been processed, or all vertices have been Unified
-pub fn kruskal<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
+pub fn kruskal<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeTypeTrait>(
     graph: &Graph<V, E, T>,
 ) -> Option<(E, Vec<(V, V)>)> {
     let edges = graph.edges_with_weights(Ordering::Less);
@@ -43,7 +43,7 @@ pub fn kruskal<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
 }
 
 /// Prim
-pub fn prim<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
+pub fn prim<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeTypeTrait>(
     graph: &Graph<V, E, T>,
     start: V,
 ) -> Option<(E, Vec<(V, V)>)> {

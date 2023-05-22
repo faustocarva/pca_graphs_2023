@@ -38,8 +38,8 @@ impl<T> GraphEdgeTrait for T where
 {
 }
 
-pub trait GraphVertexTrait: Debug + Hash + Eq + Clone + Copy + PartialOrd + Ord {}
-impl<T> GraphVertexTrait for T where T: Debug + Hash + Eq + Clone + Copy + PartialOrd + Ord {}
+pub trait GraphVertexTrait: Debug + Hash + Clone + Copy + PartialOrd + Ord {}
+impl<T> GraphVertexTrait for T where T: Debug + Hash + Clone + Copy + PartialOrd + Ord {}
 
 #[derive(Debug, Default, Eq, PartialEq)]
 pub struct Graph<V: GraphVertexTrait, E: GraphEdgeTrait, T = Directed> {
@@ -53,17 +53,17 @@ pub enum Directed {}
 #[derive(Debug)]
 pub enum Undirected {}
 
-pub trait EdgeType {
+pub trait EdgeTypeTrait {
     fn is_directed() -> bool;
 }
 
-impl EdgeType for Directed {
+impl EdgeTypeTrait for Directed {
     fn is_directed() -> bool {
         true
     }
 }
 
-impl EdgeType for Undirected {
+impl EdgeTypeTrait for Undirected {
     fn is_directed() -> bool {
         false
     }
@@ -125,7 +125,7 @@ impl<V, E, T> Graph<V, E, T>
 where
     V: GraphVertexTrait,
     E: GraphEdgeTrait,
-    T: EdgeType,
+    T: EdgeTypeTrait,
 {
     pub fn add_vertex(&mut self, vertex: V) {
         self.adj_list.entry(vertex).or_insert(Vec::new());
@@ -183,14 +183,14 @@ where
     }
 
     pub fn edges_with_weights(&self, order: std::cmp::Ordering) -> Vec<(V, V, E)> {
-        let mut flat_graph: Vec<(V, V, E)> = Vec::new();
+        let mut edges: Vec<(V, V, E)> = Vec::new();
         for from in &self.adj_list {
             for to in from.1 {
-                flat_graph.push((*from.0, to.0, to.1));
+                edges.push((*from.0, to.0, to.1));
             }
         }
 
-        flat_graph.sort_unstable_by(|a, b| {
+        edges.sort_unstable_by(|a, b| {
             let weight_a = a.2;
             let weight_b = b.2;
             match order {
@@ -205,7 +205,7 @@ where
                     .unwrap_or(std::cmp::Ordering::Less),
             }
         });
-        flat_graph
+        edges
     }
 }
 

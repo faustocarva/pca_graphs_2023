@@ -1,10 +1,10 @@
-use super::{EdgeType, Graph, GraphEdgeTrait, GraphVertexTrait};
+use super::{EdgeTypeTrait, Graph, GraphEdgeTrait, GraphVertexTrait};
 use std::collections::BTreeMap;
 
 /// All-Pairs Shortest Path algorithms.
 
 /// Floyd-Warshall algorithm
-pub fn floyd_warshall<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
+pub fn floyd_warshall<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeTypeTrait>(
     graph: &Graph<V, E, T>,
 ) -> Option<BTreeMap<V, BTreeMap<V, E>>> {
     let mut weight_matrix: BTreeMap<V, BTreeMap<V, E>> = BTreeMap::new(); // |V|x|V| matrix
@@ -100,5 +100,15 @@ mod test_single_path {
         let res = floyd_warshall(&graph);
         println!("{:?}", res);
         assert_eq!(dists_0, res.unwrap());
+    }
+
+    #[test]
+    fn test_detect_negative_cycle() {
+        let mut graph = super::Graph::new();
+        graph.add_edge(1, 2, 1);
+        graph.add_edge(2, 3, 3);
+        graph.add_edge(3, 4, 2);
+        graph.add_edge(4, 2, -6);
+        assert_eq!(None, floyd_warshall(&graph));
     }
 }

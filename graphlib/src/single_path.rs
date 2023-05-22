@@ -55,9 +55,7 @@ pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
             let mut next_distance = *distances.get(&from).unwrap();
             next_distance = safe_add(next_distance, weight);
 
-            if *distances.get(&from).unwrap() != E::max_value()
-                && (next_distance < *distances.get(&to).unwrap())
-            {
+            if next_distance < *distances.get(&to).unwrap() {
                 distances.insert(to, next_distance);
             }
         }
@@ -77,8 +75,14 @@ pub fn bellman_ford<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeType>(
 fn safe_add<E: GraphEdgeTrait>(next_distance: E, weight: E) -> E {
     let res = next_distance.checked_add(&weight);
     match res {
-        Some(sum) => sum,
-        None => weight,
+        Some(sum) => {
+            if next_distance == E::max_value() {
+                weight
+            } else {
+                sum
+            }
+        }
+        None => E::max_value(),
     }
 }
 
@@ -216,5 +220,51 @@ mod test_single_path {
         assert_eq!(hashmap_0, res1.unwrap());
         let res2 = bellman_ford(&graph, 1);
         assert_eq!(hashmap_1, res2.unwrap());
+    }
+    #[test]
+    fn test_bellman() {
+        let mut h = super::Graph::new();
+        h.add_edge(0, 1, 4);
+        h.add_edge(0, 2, 2);
+        h.add_edge(0, 3, 1);
+        h.add_edge(1, 2, 1);
+        h.add_edge(1, 3, 1);
+        assert_eq!(bellman_ford(&h, 0).unwrap().get(&1).unwrap(), &4);
+
+        assert_eq!(
+            *bellman_ford(&h, 1).unwrap().get(&0).unwrap(),
+            i32::max_value()
+        );
+
+        assert_eq!(
+            *bellman_ford(&h, 2).unwrap().get(&1).unwrap(),
+            i32::max_value()
+        );
+        assert_eq!(
+            *bellman_ford(&h, 2).unwrap().get(&3).unwrap(),
+            i32::max_value()
+        );
+        assert_eq!(
+            *bellman_ford(&h, 2).unwrap().get(&0).unwrap(),
+            i32::max_value()
+        );
+
+        assert_eq!(
+            *bellman_ford(&h, 3).unwrap().get(&1).unwrap(),
+            i32::max_value()
+        );
+        assert_eq!(
+            *bellman_ford(&h, 3).unwrap().get(&2).unwrap(),
+            i32::max_value()
+        );
+        assert_eq!(
+            *bellman_ford(&h, 3).unwrap().get(&0).unwrap(),
+            i32::max_value()
+        );
+
+        println!("{:?}", bellman_ford(&h, 0));
+        println!("{:?}", bellman_ford(&h, 1));
+        println!("{:?}", bellman_ford(&h, 2));
+        println!("{:?}", bellman_ford(&h, 3));
     }
 }

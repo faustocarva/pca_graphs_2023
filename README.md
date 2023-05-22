@@ -5,9 +5,9 @@
 Graph algorithms that have been done: 
 
 - [x] Graph Data Structure
-    - [x] Adjacency list 
-    - [x] Directed / Undirected
-    - [x] Weighted        
+    - [x] Adjacency list - Directed / Undirected  and Weighted        
+    - [ ] Adjacency matrix    
+    - [ ] Edge list       
 - [x] Graph Transversal
     - [x] BFS
     - [x] DFS    

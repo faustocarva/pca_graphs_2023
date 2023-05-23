@@ -33,16 +33,16 @@ pub fn floyd_warshall<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeTypeTrait>(
 
     let keys = weight_matrix.keys().copied().collect::<Vec<_>>();
 
-    for &k in &keys {
-        for &i in &keys {
-            for &j in &keys {
-                let ij = weight_matrix[&i][&j];
-                let ik = weight_matrix[&i][&k];
-                let kj = weight_matrix[&k][&j];
+    for &intermediate in &keys {
+        for &source in &keys {
+            for &destination in &keys {
+                let ij = weight_matrix[&source][&destination];
+                let ik = weight_matrix[&source][&intermediate];
+                let kj = weight_matrix[&intermediate][&destination];
                 let result = ik.checked_add(&kj);
                 if let Some(sum) = result {
                     if ij > sum {
-                        weight_matrix.entry(i).or_default().insert(j, sum);
+                        weight_matrix.entry(source).or_default().insert(destination, sum);
                     }
                 }
             }

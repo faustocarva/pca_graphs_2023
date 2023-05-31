@@ -18,3 +18,6 @@ pub use single_path::dijkstra;
 
 mod all_path;
 pub use all_path::floyd_warshall;
+
+mod max_flow;
+pub use max_flow::edmonds_karp;

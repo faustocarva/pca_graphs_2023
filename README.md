@@ -30,8 +30,8 @@ Graph algorithms that have been done:
         - [ ] All-Pairs Shortest Path output
         - [x] Detect negative cycle    
 - [ ] Maximum flow problem
-    - [ ] Edmonds-Karp algorithm (Ford–Fulkerson implementation)
-- [ ] Centrality problem / Link Analysis 
+    - [x] Edmonds-Karp algorithm (Ford–Fulkerson implementation)
+- [ ] Centrality problem
     - [ ] PageRank algorithm
     
 ## How to build and test

@@ -32,6 +32,10 @@ Graph algorithms that have been done:
 - [ ] Maximum flow problem
     - [x] Edmonds-Karp algorithm (Ford–Fulkerson implementation)
 - [ ] Centrality problem
+    - [ ] Degree measure
+    - [ ] Betweenness measure
+    - [ ] Closeness measure
+    - [ ] Eigenvector measure            
     - [ ] PageRank algorithm
     
 ## How to build and test

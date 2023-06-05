@@ -156,6 +156,18 @@ where
         self.adj_list.get(&v)
     }
 
+    pub fn get_incoming_vertices(&self, v: V) -> Option<Vec<V>> {
+        let mut incoming: Vec<V> = Vec::new();        
+        for from in &self.adj_list {
+            for to in from.1 {
+                if to.0 == v {
+                    incoming.push(*from.0);
+                }
+            }
+        }
+        Some(incoming)
+    }
+
     pub fn adj_list(&self) -> &BTreeMap<V, Vec<(V, E)>> {
         &self.adj_list
     }

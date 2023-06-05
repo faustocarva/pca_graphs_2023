@@ -18,11 +18,12 @@ pub fn pagerank<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeTypeTrait>(
     loop {
         let mut diff = 0.0;
 
-        for (page, links) in graph.adj_list() {
+        for (page, _) in graph.adj_list() {
             let mut rank = 0.0;
-            for (linked_page, _) in links {
-                let linked_count = graph.get_adjacent_vertices(*linked_page).unwrap().len() as f64;
-                rank += pagerank[linked_page] / linked_count;
+
+            for incoming_pages in graph.get_incoming_vertices(*page).unwrap() {
+                let linked_count = graph.get_incoming_vertices(incoming_pages).unwrap().len() as f64;
+                rank += 1./linked_count * pagerank[&incoming_pages];
             }
             rank = (1.0 - damping_factor) / num_pages + damping_factor * rank;
             new_pagerank.insert(*page, rank);
@@ -52,15 +53,27 @@ mod test_pagerank {
     #[test]
     fn test_pagerank() {
         let mut g = Graph::new();
-        g.add_vertex("1");
-        g.add_vertex("2");
-        g.add_vertex("3");
-        g.add_edge("1", "2", 0);
-        g.add_edge("1", "3", 0);
-        g.add_edge("2", "3", 0);
-        g.add_edge("2", "1", 0);        
-        g.add_edge("3", "2", 0);                
-        let rank = pagerank(&g, 0.85, 0.0001);
+        g.add_vertex("A");
+        g.add_vertex("B");
+        g.add_vertex("C");
+        g.add_vertex("D");        
+        g.add_edge("A", "B", 0);
+        g.add_edge("A", "C", 0);
+        g.add_edge("A", "D", 0);        
+
+        g.add_edge("B", "A", 0);        
+        g.add_edge("B", "D", 0);        
+
+        g.add_edge("C", "D", 0);                
+
+        g.add_edge("D", "C", 0);                        
+        g.add_edge("D", "B", 0);                                
+
+
+        let rank = pagerank(&g, 0.85, 0.0000001);
+        assert_eq!(rank[&"D"] > rank[&"B"], true );        
+        assert_eq!(rank[&"B"] > rank[&"A"], true );                
+
         println!("{:?}", rank);        
 
     }

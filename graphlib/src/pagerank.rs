@@ -11,7 +11,6 @@ pub fn pagerank<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeTypeTrait>(
     let mut pagerank: HashMap<V, f64> = HashMap::new();
     let mut new_pagerank: HashMap<V, f64> = HashMap::new();
 
-    // Initialize pagerank values
     for page in graph.vertices() {
         pagerank.insert(*page, initial_rank);
     }
@@ -19,7 +18,6 @@ pub fn pagerank<V: GraphVertexTrait, E: GraphEdgeTrait, T: EdgeTypeTrait>(
     loop {
         let mut diff = 0.0;
 
-        // Calculate new pagerank values
         for (page, links) in graph.adj_list() {
             let mut rank = 0.0;
             for (linked_page, _) in links {
